@@ -15,17 +15,21 @@
       integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
       crossorigin="anonymous"
     />
-
+    <!-- SCSS  -->
     {% assets "scss_all" %}
             <link rel=stylesheet type=text/css href="{{ ASSET_URL }}">
     {% endassets %}
 
+     <!-- 
+       Fontawesome -->
+    {{ fontawesome_html() }}
+
     <title>{% block title %} {% endblock %}</title>
   </head>
   <body>
-    <nav class="navbar navbar-expand-md navbar-light bg-light">
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark bg-light">
       
-      <a class="navbar-brand" href="{{ url_for('index')}}">Power</a>
+      <a class="navbar-brand" href="{{ url_for('index')}}"><span class="fas fa-power-off"></span> Led</a>
       <button
         class="navbar-toggler"
         type="button"

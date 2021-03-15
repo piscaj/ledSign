@@ -1,5 +1,6 @@
 from flask import Flask, render_template
 from flask_assets import Environment, Bundle
+from flask_fontawesome import FontAwesome
 
 app = Flask(__name__)
 
@@ -8,6 +9,8 @@ assets = Environment(app)
 assets.url = app.static_url_path
 scss = Bundle('scss/styleIndex.scss','scss/styleMatrix.scss','scss/styleStrip.scss','scss/styleSetup.scss', filters='pyscss', output='all.css')
 assets.register('scss_all', scss)
+
+fa = FontAwesome(app)
 
 @app.route("/")
 def index():
