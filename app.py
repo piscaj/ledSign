@@ -3,6 +3,7 @@ from flask_assets import Environment, Bundle
 
 app = Flask(__name__)
 
+#Setup Flask to use scss
 assets = Environment(app)
 assets.url = app.static_url_path
 scss = Bundle('style.scss', filters='pyscss', output='all.css')
