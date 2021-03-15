@@ -1,0 +1,27 @@
+
+#led-matrix {
+h1 {
+    color: rgb(212, 13, 238);
+    text-align: center;
+    padding: 10px;
+}
+
+ /* Overriding Bootstrap for new look for row and col */
+ .complete-table {
+    width: 100%;
+  }
+
+  .row {
+    margin: 5px 0 5px 0;
+    text-align: center;
+  }
+
+  .row > .col,
+  .row > [class^="col-"] {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    background-color: rgba(86, 61, 124, 0.15);
+    border: 1px solid rgba(86, 61, 124, 0.2);
+  }
+
+}
