@@ -6,7 +6,7 @@ app = Flask(__name__)
 #Setup Flask to use scss
 assets = Environment(app)
 assets.url = app.static_url_path
-scss = Bundle('styleIndex.scss','styleMatrix.scss','styleStrip.scss','styleSetup.scss', filters='pyscss', output='all.css')
+scss = Bundle('scss/styleIndex.scss','scss/styleMatrix.scss','scss/styleStrip.scss','scss/styleSetup.scss', filters='pyscss', output='all.css')
 assets.register('scss_all', scss)
 
 @app.route("/")
