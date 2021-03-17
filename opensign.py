@@ -60,7 +60,7 @@ class OpenSign:
         rows=32,
         columns=64,
         chain=1,
-        brightness=100,
+        brightness=80,
         gpio_mapping="adafruit-hat-pwm",
         parallel=1,
         pwm_bits=11,
@@ -75,7 +75,8 @@ class OpenSign:
         pixel_mapper=""
     ):
         options = RGBMatrixOptions()
-
+        options.drop_privileges = 0
+        options.daemon = 0
         options.hardware_mapping = gpio_mapping
         options.rows = rows
         options.cols = columns
@@ -219,7 +220,7 @@ class OpenSign:
                 shadow_offset=canvas.shadow_offset,
             ),
             0,
-            0,
+            unsafe=False,
         )
         self._update()
 
@@ -239,7 +240,7 @@ class OpenSign:
                 shadow_offset=shadow_offset,
             ),
             0,
-            0,
+            unsafe=False,
         )
         self._update()
 
