@@ -3,9 +3,11 @@ from flask_assets import Environment, Bundle
 from flask_fontawesome import FontAwesome
 from celery import Celery
 from threading import Thread
-from sign import start, status, onOff
+from mysign import mySign
 
 app = Flask(__name__)
+
+sign = mySign()
 
 # Start Celery client ###############
 app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
@@ -29,16 +31,14 @@ fa = FontAwesome(app)
 # Flask Routes ######################
 @app.route("/")
 def index():
-    mstate = status()
-    print(status)
-    if mstate == 1:
+    if sign.isRunning:
         matrixPowerState = 'checked'
     else:
         matrixPowerState = 'unchecked'
+        
     neoPixlPowerState = 'unchecked'
     return render_template('index.html', matrixSwitchState=matrixPowerState,
                            neoPixlSwitchState=neoPixlPowerState)
-
 
 @app.route("/matrix")
 def matrix():
@@ -57,27 +57,21 @@ def setup():
 
 @app.route('/MatrixOn')
 def matrixOn():
-    mstate = status()
-    print(status)
-    if mstate == 1:
-        matrixPowerState = 'checked'
-    else:
-        onOff(1)
-        m = Thread(target=start)
-        m.start()
+    if sign.isRunning:
         matrixPowerState = 'unchecked'
+    else:
+        matrixPowerState = 'checked'
+        sign.startSign()
     return render_template('index.html', matrixSwitchState=matrixPowerState)
 
 
 @app.route('/MatrixOff')
 def matrixOff():
-    onOff(0)
-    mstate = status()
-    print(status)
-    if mstate == 1:
-        matrixPowerState = 'checked'
-    else:
+    if sign.isRunning:
         matrixPowerState = 'unchecked'
+        sign.stopSign()
+    else:
+        matrixPowerState = 'checked'
     return render_template('index.html', matrixSwitchState=matrixPowerState)
 
 
