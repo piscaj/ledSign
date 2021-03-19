@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 from flask_assets import Environment, Bundle
 from flask_fontawesome import FontAwesome
 from celery import Celery
@@ -29,6 +29,8 @@ fa = FontAwesome(app)
 #####################################
 
 # Flask Routes ######################
+
+
 @app.route("/")
 def index():
     if sign.isRunning:
@@ -57,22 +59,20 @@ def setup():
 
 @app.route('/MatrixOn')
 def matrixOn():
-    if sign.isRunning:
-        matrixPowerState = 'unchecked'
-    else:
+    if not sign.isRunning:
         matrixPowerState = 'checked'
+        busyMessageHeader = "Matrix LED Starting"
         sign.startSign()
-    return render_template('index.html', matrixSwitchState=matrixPowerState)
+    return "Nothing"
 
 
 @app.route('/MatrixOff')
 def matrixOff():
     if sign.isRunning:
-        matrixPowerState = 'unchecked'
         sign.stopSign()
-    else:
-        matrixPowerState = 'checked'
-    return render_template('index.html', matrixSwitchState=matrixPowerState)
+        matrixPowerState = 'unchecked'
+        busyMessageHeader = "Matrix LED Stopping"
+    return "Nothing"
 
 
 @app.route('/NeoPixlOn')

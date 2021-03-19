@@ -7,7 +7,17 @@ class mySign:
     sign = OpenSign()
     isRunning = False 
     killSign = False
+    busy = False
     newMessage = OpenSignCanvas()
+    powerOffMessage = OpenSignCanvas()
+    emptyMessage = OpenSignCanvas()
+    
+    powerOffMessage
+    powerOffMessage.clear
+    powerOffMessage.add_font("comic", "/usr/share/fonts/truetype/msttcorefonts/Comic_Sans_MS.ttf", 14)
+    powerOffMessage.set_stroke(1, (255, 255, 255))
+    powerOffMessage.add_text("OFF", (255, 0, 0), y_offset=-2)
+    powerOffMessage.set_shadow()
      
     def __init__(
         self,
@@ -29,24 +39,27 @@ class mySign:
         mySign.newMessage.clear
         mySign.newMessage.add_font("comic", "/usr/share/fonts/truetype/msttcorefonts/Comic_Sans_MS.ttf", 14)
         mySign.newMessage.set_stroke(1, strokeColor)
-        mySign.newMessage.add_text(text, textColor)
+        mySign.newMessage.add_text(text, textColor, y_offset=-2)
         mySign.newMessage.set_shadow()
         return "New message created"
     
     def startSign(self):
         if mySign.isRunning == False:
+            mySign.busy=True
             mySign.killSign = True
             tSign = Thread(target=self._runSign).start()
     
     def stopSign(self):
+        mySign.busy=True
         mySign.killSign=False
         print('Killing Sign Process...')
              
     def _runSign(self):
         mySign.isRunning = True
-        print('Sign Started...')
+        print('Sign Starting...')
         while mySign.killSign:
             print('Started...')
+            mySign.busy=False
             if mySign.killSign:
                 mySign.sign.join_in_vertically(mySign.newMessage)
             if mySign.killSign:
@@ -75,12 +88,17 @@ class mySign:
                 mySign.sign.scroll_in_from_right(mySign.newMessage)
             if mySign.killSign:
                 mySign.sign.sleep(1)
-            else: 
+            else:
+                #mySign.sign.hide(mySign.newMessage)
+                #mySign.sign.flash(mySign.powerOffMessage, count=1)
+                #mySign.sign.hide(mySign.powerOffMessage)
+                #mySign.sign.set_background_color((0,0,0))
+                #mySign.sign.show(mySign.powerOffMessage)
+                print('Sign Stopped...')
                 mySign.isRunning = False
-                mySign.sign.set_background_color((0, 0, 0))
-                print('Sign Stopped...') 
+                mySign.busy=False
         mySign.isRunning = False
-        mySign.sign.set_background_color((0, 0, 0))
+        mySign.busy=False
     
          
 

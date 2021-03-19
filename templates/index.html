@@ -1,5 +1,21 @@
 {% extends 'base.html' %} {% block content %}
-
+<!-- Modal -->
+<div class="modal fade" id="busyDialog" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="busyDialogLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title  mx-auto" id="staticBackdropLabel">Making your change.</h5>
+      </div>
+      <div class="modal-body">
+        <div class="loader mx-auto"></div>
+      </div>
+      <div class="modal-footer">
+        <h5 class="mx-auto"> Please wait a moment</h5>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal -->
 <div id="led-index" class="container">
   <div class="title">Power</div>
   <div class="row">
@@ -7,7 +23,7 @@
       <ul class="list-group">
         <li class="list-group-item">
           Matrix LED Panel
-          <div class="material-switch float-right">
+          <div class="material-switch float-end ">
             <input
               id="matrixPower"
               name="someSwitchOption001"
@@ -15,14 +31,16 @@
               onchange="matrixPower()"
               value=""
               {{ matrixSwitchState }}
+              data-bs-toggle="modal"
+              data-bs-target="#busyDialog"
             />
             
-            <label for="matrixPower" class="badge-success"></label>
+            <label for="matrixPower" class="bg-success"></label>
           </div>
         </li>
         <li class="list-group-item">
           NeoPixl LED Strip
-          <div class="material-switch float-right">
+          <div class="material-switch float-end ">
             <input
               id="neoPixlPower"
               name="someSwitchOption002"
@@ -30,14 +48,15 @@
               onchange="neoPixlPower()"
               value=""
               {{ neoPixlSwitchState }}
+              data-bs-toggle="modal"
+              data-bs-target="#busyDialog"
             />
-            <label for="neoPixlPower" class="badge-success"></label>
+            <label for="neoPixlPower" class="bg-success"></label>
           </div>
-        </li>
+        </li >
       </ul>
     </div>
-  </div>
-
+</div>
 </div>
 </div>
 
