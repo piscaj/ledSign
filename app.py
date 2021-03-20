@@ -4,10 +4,16 @@ from flask_fontawesome import FontAwesome
 from celery import Celery
 from threading import Thread
 from mysign import mySign
+from PIL import ImageColor
 
 app = Flask(__name__)
 
 sign = mySign()
+
+text = "It's time for dinner..."
+textColor = 0x00a0b0
+strokeColor = (255, 255, 255)
+
 
 # Start Celery client ###############
 app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
@@ -37,10 +43,11 @@ def index():
         matrixPowerState = 'checked'
     else:
         matrixPowerState = 'unchecked'
-        
+
     neoPixlPowerState = 'unchecked'
     return render_template('index.html', matrixSwitchState=matrixPowerState,
                            neoPixlSwitchState=neoPixlPowerState)
+
 
 @app.route("/matrix")
 def matrix():
@@ -85,11 +92,22 @@ def neoPixlOn():
 def neoPixlOff():
     print('Powering NeoPixl Strip Off...')
     return "Nothing"
+
+
+@app.route('/updateMatrix', methods=["POST"])
+def updateMatrix():
+    text = request.form['msgtext']
+    textColor = ImageColor.getcolor(request.form['msgcolor'], "RGB")
+    strokeColor = ImageColor.getcolor(request.form['msgstroke'], "RGB")
+    print('Update Matrix message...', text, textColor, strokeColor)
+    sign.makeNewMessage(text, textColor, strokeColor)
+    return render_template('matrix.html')
+
 ###########################################
 
 
 def flaskThread():
-    app.run(host='192.168.2.225', debug=False)
+    app.run(host='192.168.2.225')
 
 
 if __name__ == "__main__":

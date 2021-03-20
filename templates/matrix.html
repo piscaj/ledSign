@@ -1,11 +1,88 @@
 {% extends 'base.html' %} {% block content %}
-
-<section id="led-matrix" class="details-container">
+<!-- Modal -->
+<div
+  class="modal fade"
+  id="busyDialog"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
+  tabindex="-1"
+  aria-labelledby="busyDialogLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div class="loader mx-auto"></div>
+      </div>
+      <div class="modal-footer">
+        <h5 class="mx-auto">Please wait a moment</h5>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal -->
+<section id="led-matrix" class="container">
   <div class="title">{% block title %} Matrix Led Panel {% endblock %}</div>
   <div class="complete-table">
     <div class="row">
-      <div class="col-12">
-        
+      <div class="col">
+        <form id="update-sign" method="post" enctype="multipart/form-data">
+          <ul class="list-group">
+            <li class="list-group-item">
+              <div class="input-group mb-3 new-message">
+                <span class="input-group-text" id="newMessage">Message</span>
+                <input
+                  type="text"
+                  class="form-control"
+                  name="msgtext"
+                  id="msgtext"
+                />
+              </div>
+            </li>
+            <li class="list-group-item">
+              <label for="textColor" class="form-label float-start"
+                >Text Color</label
+              >
+              <div class="colorPicker">
+                <input
+                  type="color"
+                  class="form-control form-control-color float-end"
+                  name="msgcolor"
+                  id="msgcolor"
+                  value="#563d7c"
+                  title="Choose your color"
+                />
+              </div>
+            </li>
+            <li class="list-group-item">
+              <label for="strokeColor" class="form-label float-start"
+                >Stroke Color</label
+              >
+              <div class="colorPicker">
+                <input
+                  type="color"
+                  class="form-control form-control-color float-end"
+                  name="msgstroke"
+                  id="msgstroke"
+                  value="#563d7c"
+                  title="Choose your color"
+                />
+              </div>
+            </li>
+            <li class="list-group-item">
+              <div class="update-but">
+                <button
+                  data-bs-toggle="modal"
+                  data-bs-target="#busyDialog"
+                  type="submit"
+                  class="btn btn-secondary btn-lg mx-auto"
+                >
+                  Update
+                </button>
+              </div>
+            </li>
+          </ul>
+        </form>
       </div>
     </div>
   </div>

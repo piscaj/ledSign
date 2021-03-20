@@ -33,14 +33,24 @@ class mySign:
         self.textStrokeColor=textStrokeColor
         self.backgroundColor=backgroundColor 
         
-        self.makeNewMessage(myText,myTextColor,textStrokeColor)
+        #self.makeNewMessage(myText,myTextColor,textStrokeColor)
         
     def makeNewMessage(self,text,textColor,strokeColor):
-        mySign.newMessage.clear
+        if mySign.isRunning:
+            self.stopSign()
+            while mySign.isRunning:
+                print('Waiting for sign to stop...')
+                mySign.sign.sleep(1)
+        mySign.newMessage.clear()
+        mySign.sign.show(mySign.newMessage)
+        mySign.sign.sleep(1)
+        mySign.sign.hide(mySign.newMessage)
         mySign.newMessage.add_font("comic", "/usr/share/fonts/truetype/msttcorefonts/Comic_Sans_MS.ttf", 14)
         mySign.newMessage.set_stroke(1, strokeColor)
         mySign.newMessage.add_text(text, textColor, y_offset=-2)
         mySign.newMessage.set_shadow()
+        print('Message updated...')
+        self.startSign()
         return "New message created"
     
     def startSign(self):
@@ -63,9 +73,9 @@ class mySign:
             if mySign.killSign:
                 mySign.sign.join_in_vertically(mySign.newMessage)
             if mySign.killSign:
-                mySign.sign.loop_left(mySign.newMessage)
+                mySign.sign.scroll_in_from_right(mySign.newMessage)
             if mySign.killSign:
-                mySign.sign.flash(mySign.newMessage, count=3)
+                mySign.sign.scroll_out_to_left(mySign.newMessage)
             if mySign.killSign:
                 mySign.sign.split_out_vertically(mySign.newMessage)
             if mySign.killSign:
@@ -83,17 +93,18 @@ class mySign:
             if mySign.killSign:
                 mySign.sign.sleep(1)
             if mySign.killSign:
-                mySign.sign.scroll_out_to_bottom(mySign.newMessage)
+                mySign.sign.scroll_out_to_left(mySign.newMessage)
             if mySign.killSign:
-                mySign.sign.scroll_in_from_right(mySign.newMessage)
+                mySign.sign.blink(mySign.newMessage)
             if mySign.killSign:
                 mySign.sign.sleep(1)
             else:
-                #mySign.sign.hide(mySign.newMessage)
-                #mySign.sign.flash(mySign.powerOffMessage, count=1)
-                #mySign.sign.hide(mySign.powerOffMessage)
-                #mySign.sign.set_background_color((0,0,0))
-                #mySign.sign.show(mySign.powerOffMessage)
+                mySign.sign.hide(mySign.newMessage)
+                mySign.sign.set_background_color((0,0,0))
+                mySign.sign.set_position(mySign.powerOffMessage,0,0)
+                mySign.sign.show(mySign.powerOffMessage)
+                mySign.sign.sleep(1)
+                mySign.sign.hide(mySign.powerOffMessage)
                 print('Sign Stopped...')
                 mySign.isRunning = False
                 mySign.busy=False

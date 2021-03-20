@@ -108,6 +108,20 @@
           } 
           }
 
+          $('#update-sign').submit(function(e){
+            e.preventDefault();
+            $.ajax({
+                url: '/updateMatrix',
+                type: 'post',
+                data:$('#update-sign').serialize(),
+                success:function(){
+                  setTimeout(function () {
+                    //alert('Reloading Page');
+                    window.location.href = "{{ url_for('matrix')}}";
+                  }, 9000);
+                }
+            });
+        });
 
 </script>
   </body>
