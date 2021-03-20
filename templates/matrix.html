@@ -32,6 +32,8 @@
               <div class="input-group mb-3 new-message">
                 <span class="input-group-text" id="newMessage">Message</span>
                 <input
+                  placeholder="{{ lastMessage }}"
+                  value="{{ lastMessage }}"
                   type="text"
                   class="form-control"
                   name="msgtext"
@@ -49,7 +51,7 @@
                   class="form-control form-control-color float-end"
                   name="msgcolor"
                   id="msgcolor"
-                  value="#563d7c"
+                  value="{{ lastTextColor }}"
                   title="Choose your color"
                 />
               </div>
@@ -64,7 +66,22 @@
                   class="form-control form-control-color float-end"
                   name="msgstroke"
                   id="msgstroke"
-                  value="#563d7c"
+                  value="{{ lastStrokeColor }}"
+                  title="Choose your color"
+                />
+              </div>
+            </li>
+            <li class="list-group-item">
+              <label for="bgColor" class="form-label float-start"
+                >Background Color</label
+              >
+              <div class="colorPicker">
+                <input
+                  type="color"
+                  class="form-control form-control-color float-end"
+                  name="msgbg"
+                  id="msgbg"
+                  value="{{ lastBgColor }}"
                   title="Choose your color"
                 />
               </div>

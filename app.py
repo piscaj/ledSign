@@ -4,7 +4,6 @@ from flask_fontawesome import FontAwesome
 from celery import Celery
 from threading import Thread
 from mysign import mySign
-from PIL import ImageColor
 
 app = Flask(__name__)
 
@@ -51,7 +50,12 @@ def index():
 
 @app.route("/matrix")
 def matrix():
-    return render_template('matrix.html')
+    lastMessage = sign.myText
+    lastTextColor = sign.myTextColor
+    lastStrokeColor = sign.myStrokeColor
+    lastBgColor = sign.myBackgroundColor
+
+    return render_template('matrix.html', lastMessage=lastMessage, lastTextColor=lastTextColor, lastBgColor=lastBgColor)
 
 
 @app.route("/strip")
@@ -97,10 +101,11 @@ def neoPixlOff():
 @app.route('/updateMatrix', methods=["POST"])
 def updateMatrix():
     text = request.form['msgtext']
-    textColor = ImageColor.getcolor(request.form['msgcolor'], "RGB")
-    strokeColor = ImageColor.getcolor(request.form['msgstroke'], "RGB")
-    print('Update Matrix message...', text, textColor, strokeColor)
-    sign.makeNewMessage(text, textColor, strokeColor)
+    textColor = request.form['msgcolor']
+    strokeColor = request.form['msgstroke']
+    bgColor = request.form['msgbg']
+    print('Update Matrix message...', text, textColor, strokeColor, bgColor)
+    sign.makeNewMessage(text, textColor, strokeColor, bgColor)
     return render_template('matrix.html')
 
 ###########################################
