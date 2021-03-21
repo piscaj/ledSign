@@ -1,11 +1,17 @@
-from flask import Flask, render_template, request, redirect
+import os
+from os.path import join, dirname, realpath
+from flask import Flask, render_template, request, redirect, flash
 from flask_assets import Environment, Bundle
 from flask_fontawesome import FontAwesome
 from celery import Celery
 from threading import Thread
 from mysign import mySign
 
+UPLOADS_PATH = join(dirname(realpath(__file__)), 'static/uploads')
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'bmp', 'ppm'}
+
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = UPLOADS_PATH
 
 sign = mySign()
 
@@ -15,10 +21,10 @@ strokeColor = (255, 255, 255)
 
 
 # Start Celery client ###############
-app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
-app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
-celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
-celery.conf.update(app.config)
+#app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
+#app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
+#celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
+# celery.conf.update(app.config)
 #####################################
 
 # Setup Flask to use scss ###########
@@ -34,6 +40,11 @@ fa = FontAwesome(app)
 #####################################
 
 # Flask Routes ######################
+
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 @app.route("/")
@@ -104,8 +115,25 @@ def updateMatrix():
     textColor = request.form['msgcolor']
     strokeColor = request.form['msgstroke']
     bgColor = request.form['msgbg']
-    print('Update Matrix message...', text, textColor, strokeColor, bgColor)
-    sign.makeNewMessage(text, textColor, strokeColor, bgColor)
+
+
+@app.route('/upload', methods=["POST"])
+def upload():
+    if request.method == 'POST':
+        # check if the post request has the file part
+        if 'msgimage' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files['msgimage']
+        # if user does not select file, browser also
+        # submit an empty part without filename
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            filename = file.filename
+            print(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
     return render_template('matrix.html')
 
 ###########################################

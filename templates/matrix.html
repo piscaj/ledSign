@@ -92,14 +92,36 @@
                   data-bs-toggle="modal"
                   data-bs-target="#busyDialog"
                   type="submit"
-                  class="btn btn-secondary btn-lg mx-auto"
+                  class="btn btn-secondary btn-md "
                 >
-                  Update
+                  Update Message
                 </button>
               </div>
             </li>
+          </form>
+        </ul>
+        <br>
+        <ul class="list-group">
+          <form id="upload-image" method="post" enctype="multipart/form-data" action = "{{ url_for('upload')}}" >
+            <li class="list-group-item">
+              <div class="add-image">
+                <input class="form-control" type="file" name="msgimage" id="msgimage" accept=".jpg,.png,.bmp,.ppm">
+              </div>
+            </li>
+            <li class="list-group-item">
+              <div class="upload-but">
+                <button
+                  data-bs-toggle="modal"
+                  data-bs-target="#busyDialog"
+                  type="submit"
+                  class="btn btn-secondary btn-md"
+                >
+                  Upload Image
+                </button>
+              </div>
+              </form>
+            </li>
           </ul>
-        </form>
       </div>
     </div>
   </div>
