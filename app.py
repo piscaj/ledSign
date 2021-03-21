@@ -58,15 +58,35 @@ def index():
     return render_template('index.html', matrixSwitchState=matrixPowerState,
                            neoPixlSwitchState=neoPixlPowerState)
 
-
 @app.route("/matrix")
 def matrix():
     lastMessage = sign.myText
     lastTextColor = sign.myTextColor
     lastStrokeColor = sign.myStrokeColor
     lastBgColor = sign.myBackgroundColor
-
-    return render_template('matrix.html', lastMessage=lastMessage, lastTextColor=lastTextColor, lastBgColor=lastBgColor)
+    if sign.showScrollLeft:
+         sLeftState = 'checked'
+    else:
+        sLeftState = 'unchecked'
+    if sign.showScrollRight:
+         sRightState = 'checked'
+    else:
+        sRightState = 'unchecked'
+    if sign.showFade:
+         sFadeState = 'checked'
+    else:
+        sFadeState = 'unchecked'
+    if sign.showSplit:
+         sSplitState = 'checked'
+    else:
+        sSplitState = 'unchecked'
+    if sign.showImage:
+         sImageState = 'checked'
+    else:
+        sImageState = 'unchecked'
+    return render_template('matrix.html', lastMessage=lastMessage, lastTextColor=lastTextColor, lastBgColor=lastBgColor,
+                           sLeftState=sLeftState, sRightState=sRightState,sFadeState=sFadeState,
+                           sSplitState=sSplitState, sImageState=sImageState )
 
 
 @app.route("/strip")
@@ -115,7 +135,28 @@ def updateMatrix():
     textColor = request.form['msgcolor']
     strokeColor = request.form['msgstroke']
     bgColor = request.form['msgbg']
+    sign.makeNewMessage(text,textColor,strokeColor,bgColor)
+    return "Nothing"
 
+@app.route('/updateShow', methods=["POST"])
+def updateShow():
+    sLeft, sRight, sFade, sSplit, sImage = False, False, False, False, False 
+    if request.form.get('scroll-left'):
+        sign.showScrollLeft = True
+    else:sign.showScrollLeft = False
+    if request.form.get('scroll-right'):
+        sign.showScrollRight = True
+    else:sign.showScrollRight = False
+    if request.form.get('fade'):
+        sign.showFade = True
+    else:sign.showFade = False    
+    if request.form.get('split'):
+        sign.showSplit = True
+    else:sign.showSplit = False
+    if request.form.get('show-image'):
+        sign.showImage = True
+    else:sign.showImage = False
+    return "Nothing"
 
 @app.route('/upload', methods=["POST"])
 def upload():
@@ -134,7 +175,7 @@ def upload():
             filename = file.filename
             print(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-    return render_template('matrix.html')
+    return render_template('matrix.html',filename=filename)
 
 ###########################################
 

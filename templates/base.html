@@ -123,6 +123,22 @@
             });
         });
 
+        $('#update-show').submit(function(e){
+          e.preventDefault();
+          $.ajax({
+              url: '/updateShow',
+              type: 'post',
+              data:$('#update-show').serialize(),
+              success:function(){
+                setTimeout(function () {
+                  //alert('Reloading Page');
+                  window.location.href = "{{ url_for('matrix')}}";
+                }, 2000);
+              }
+          });
+      });
+        
+
 </script>
   </body>
 </html>

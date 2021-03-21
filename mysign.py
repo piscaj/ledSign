@@ -13,7 +13,11 @@ class mySign:
     newMessage = OpenSignCanvas()
     powerOffMessage = OpenSignCanvas()
     emptyMessage = OpenSignCanvas()
-
+    showScrollRight = True
+    showScrollLeft = True
+    showFade = True
+    showSplit = True
+    showImage = True
     powerOffMessage
     powerOffMessage.clear
     powerOffMessage.add_font(
@@ -49,79 +53,75 @@ class mySign:
         strokeColor = ImageColor.getcolor(strokeColor, "RGB")
         bgColor = ImageColor.getcolor(bgColor, "RGB")
 
-        if mySign.isRunning:
+        if self.isRunning:
             self.stopSign()
-            while mySign.isRunning:
+            while self.isRunning:
                 print('Waiting for sign to stop...')
-                mySign.sign.sleep(1)
-        mySign.newMessage.clear()
-        mySign.sign.show(mySign.newMessage)
-        mySign.sign.sleep(1)
-        mySign.sign.hide(mySign.newMessage)
-        mySign.newMessage.add_font(
+                self.sign.sleep(1)
+        self.newMessage.clear()
+        self.sign.show(self.newMessage)
+        self.sign.sleep(1)
+        self.sign.hide(self.newMessage)
+        self.newMessage.add_font(
             "comic", "/usr/share/fonts/truetype/msttcorefonts/Comic_Sans_MS.ttf", 14)
-        mySign.newMessage.set_stroke(1, strokeColor)
-        mySign.newMessage.add_text(text, textColor, y_offset=-2)
-        mySign.newMessage.set_shadow()
+        self.newMessage.set_stroke(1, strokeColor)
+        self.newMessage.add_text(text, textColor, y_offset=-2)
+        self.newMessage.set_shadow()
         print('Message updated...')
         self.startSign()
         return "New message created"
 
     def startSign(self):
-        if mySign.isRunning == False:
-            mySign.busy = True
-            mySign.killSign = True
+        if self.isRunning == False:
+            self.busy = True
+            self.killSign = True
             tSign = Thread(target=self._runSign).start()
 
     def stopSign(self):
-        mySign.busy = True
-        mySign.killSign = False
+        self.busy = True
+        self.killSign = False
         print('Killing Sign Process...')
 
     def _runSign(self):
-        mySign.isRunning = True
+        self.isRunning = True
         print('Sign Starting...')
-        while mySign.killSign:
+        while self.killSign:
             print('Started...')
-            mySign.busy = False
-            if mySign.killSign:
-                mySign.sign.join_in_vertically(mySign.newMessage)
-            if mySign.killSign:
-                mySign.sign.scroll_in_from_right(mySign.newMessage)
-            if mySign.killSign:
-                mySign.sign.scroll_out_to_left(mySign.newMessage)
-            if mySign.killSign:
-                mySign.sign.split_out_vertically(mySign.newMessage)
-            if mySign.killSign:
-                mySign.sign.sleep(1)
-            if mySign.killSign:
-                mySign.sign.set_background_color(
-                    ImageColor.getcolor(self.myBackgroundColor, "RGB"))
-            if mySign.killSign:
-                mySign.sign.fade_in(mySign.newMessage)
-            if mySign.killSign:
-                mySign.sign.sleep(1)
-            if mySign.killSign:
-                mySign.sign.fade_out(mySign.newMessage)
-            if mySign.killSign:
-                mySign.sign.scroll_in_from_top(mySign.newMessage)
-            if mySign.killSign:
-                mySign.sign.sleep(1)
-            if mySign.killSign:
-                mySign.sign.scroll_out_to_left(mySign.newMessage)
-            if mySign.killSign:
-                mySign.sign.blink(mySign.newMessage)
-            if mySign.killSign:
-                mySign.sign.sleep(1)
+            self.busy = False
+            if self.killSign:
+                self.sign.set_background_color(
+                ImageColor.getcolor(self.myBackgroundColor, "RGB"))
+            if (self.killSign) and (self.showSplit):
+                self.sign.join_in_vertically(self.newMessage)
+            if (self.killSign) and (self.showScrollLeft):
+                self.sign.scroll_in_from_right(self.newMessage)
+            if (self.killSign) and (self.showScrollLeft):
+                self.sign.scroll_out_to_left(self.newMessage)
+            if (self.killSign) and (self.showScrollRight):
+                self.sign.scroll_in_from_left(self.newMessage)
+            if (self.killSign) and (self.showScrollRight):
+                self.sign.scroll_out_to_right(self.newMessage)
+            if (self.killSign) and (self.showSplit):
+                self.sign.split_out_vertically(self.newMessage)
+            if (self.killSign) and (self.showFade):
+                self.sign.sleep(1)
+            if (self.killSign) and (self.showFade):
+                self.sign.fade_in(self.newMessage)
+            if (self.killSign) and (self.showFade):
+                self.sign.sleep(1)
+            if (self.killSign) and (self.showFade):
+                self.sign.fade_out(self.newMessage)
+            if self.killSign:
+                self.sign.sleep(1)
             else:
-                mySign.sign.hide(mySign.newMessage)
-                mySign.sign.set_background_color((0, 0, 0))
-                mySign.sign.set_position(mySign.powerOffMessage, 0, 0)
-                mySign.sign.show(mySign.powerOffMessage)
-                mySign.sign.sleep(1)
-                mySign.sign.hide(mySign.powerOffMessage)
+                self.sign.hide(self.newMessage)
+                self.sign.set_background_color((0, 0, 0))
+                self.sign.set_position(self.powerOffMessage, 0, 0)
+                self.sign.show(self.powerOffMessage)
+                self.sign.sleep(1)
+                self.sign.hide(self.powerOffMessage)
                 print('Sign Stopped...')
-                mySign.isRunning = False
-                mySign.busy = False
-        mySign.isRunning = False
-        mySign.busy = False
+                self.isRunning = False
+                self.busy = False
+        self.isRunning = False
+        self.busy = False
