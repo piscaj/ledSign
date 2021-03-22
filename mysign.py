@@ -17,7 +17,8 @@ class mySign:
     showScrollLeft = True
     showFade = True
     showSplit = True
-    showImage = True
+    showImage = False
+    myImagePath = ""
     powerOffMessage
     powerOffMessage.clear
     powerOffMessage.add_font(
@@ -62,6 +63,9 @@ class mySign:
         self.sign.show(self.newMessage)
         self.sign.sleep(1)
         self.sign.hide(self.newMessage)
+        if (self.myImagePath) and (self.showImage):
+            self.newMessage.add_image(
+                self.myImagePath)
         self.newMessage.add_font(
             "comic", "/usr/share/fonts/truetype/msttcorefonts/Comic_Sans_MS.ttf", 14)
         self.newMessage.set_stroke(1, strokeColor)
