@@ -1,6 +1,6 @@
-import os
+import os, time
 from os.path import join, dirname, realpath
-from flask import Flask, render_template, request, redirect, flash
+from flask import Flask, render_template, request, redirect, flash, url_for
 from flask_assets import Environment, Bundle
 from flask_fontawesome import FontAwesome
 from celery import Celery
@@ -45,18 +45,21 @@ fa = FontAwesome(app)
 # Flask Routes ######################
 
 def resize_image(file):
+    with Image.open(file) as image:
+        print(image)
+        img = resizeimage.resize_contain(image, [64, 32])
+        img.save(file, image.format)
+        
     #fd_img = open(file, 'r')
-    img = Image.open(file)
-    img = resizeimage.resize_contain(img, [32, 64])
+    #img = Image.open(file)
+    #img = resizeimage.resize_contain(img, [32, 64])
     #img.save(file, img.format)
-    img.save(file,"PNG")
+    #img.save(file,"PNG")
     #fd_img.close()
-
 
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
 
 @app.route("/")
 def index():
@@ -75,6 +78,8 @@ def matrix():
     lastTextColor = sign.myTextColor
     lastStrokeColor = sign.myStrokeColor
     lastBgColor = sign.myBackgroundColor
+    lastImagePath = sign.myImagePath
+    print(lastImagePath)
     if sign.showScrollLeft:
          sLeftState = 'checked'
     else:
@@ -97,8 +102,7 @@ def matrix():
         sImageState = 'unchecked'
     return render_template('matrix.html', lastMessage=lastMessage, lastTextColor=lastTextColor, lastBgColor=lastBgColor,
                            sLeftState=sLeftState, sRightState=sRightState,sFadeState=sFadeState,
-                           sSplitState=sSplitState, sImageState=sImageState )
-
+                           sSplitState=sSplitState, sImageState=sImageState, lastImagePath=lastImagePath )
 
 @app.route("/strip")
 def strip():
@@ -142,16 +146,11 @@ def neoPixlOff():
 
 @app.route('/updateMatrix', methods=["POST"])
 def updateMatrix():
+    sLeft, sRight, sFade, sSplit, sImage = False, False, False, False, False
     text = request.form['msgtext']
     textColor = request.form['msgcolor']
     strokeColor = request.form['msgstroke']
-    bgColor = request.form['msgbg']
-    sign.makeNewMessage(text,textColor,strokeColor,bgColor)
-    return "Nothing"
-
-@app.route('/updateShow', methods=["POST"])
-def updateShow():
-    sLeft, sRight, sFade, sSplit, sImage = False, False, False, False, False 
+    bgColor = request.form['msgbg'] 
     if request.form.get('scroll-left'):
         sign.showScrollLeft = True
     else:sign.showScrollLeft = False
@@ -167,6 +166,7 @@ def updateShow():
     if request.form.get('show-image'):
         sign.showImage = True
     else:sign.showImage = False
+    sign.makeNewMessage(text,textColor,strokeColor,bgColor)
     return "Nothing"
 
 @app.route('/upload', methods=["POST"])
@@ -183,10 +183,10 @@ def upload():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             print(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            mySign.myImagePath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            mySign.myImagePath = "static/uploads/"+filename
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             resize_image(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-    return render_template('matrix.html')
+    return  redirect(url_for('matrix'))
 
 ###########################################
 

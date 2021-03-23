@@ -87,6 +87,30 @@
               </div>
             </li>
             <li class="list-group-item">
+              <div class="form-check form-check-inline">
+                <input class="form-check-input check-show" type="checkbox" id="scroll-left" name="scroll-left" value="sLeft" {{ sLeftState }}>
+                <label class="form-check-label" for="scroll-left">Scroll Left</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input check-show" type="checkbox" id="scroll-right" name="scroll-right" value="sRight" {{ sRightState }}>
+                <label class="form-check-label" for="scroll-right">Scroll Right</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input check-show" type="checkbox" id="fade" name="fade" value="sFade" {{ sFadeState }}> 
+                <label class="form-check-label" for="fade">Fade</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input check-show" type="checkbox" id="split" name="split" value="sSplit" {{ sSplitState }}>
+                <label class="form-check-label" for="split">Split</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input check-show" type="checkbox" id="show-image" name="show-image" value="sImage" {{ sImageState }}>
+                <img src="{{ lastImagePath }}" class="img-thumbnail" alt="Bg Image">
+                <label class="form-check-label" for="show-image"> Background Image</label>
+      
+              </div>
+              </li>
+            <li class="list-group-item">
               <div class="update-but">
                 <button
                   data-bs-toggle="modal"
@@ -105,7 +129,7 @@
           <form id="upload-image" method="post" enctype="multipart/form-data" action = "{{ url_for('upload')}}" >
             <li class="list-group-item">
               <div class="add-image">
-                <input class="form-control" type="file" name="msgimage" id="msgimage" accept=".jpg,.png,.bmp,.ppm">
+                <input class="form-control" type="file" name="msgimage" id="msgimage" accept=".gif,.jpeg,.jpg,.png,.bmp,.ppm">
               </div>
             </li>
             <li class="list-group-item">
@@ -116,50 +140,13 @@
                   type="submit"
                   class="btn btn-secondary btn-md"
                 >
-                  Upload Image
+                  Upload Background Image
                 </button>
               </div>
               </form>
             </li>
           </ul>
           <br>
-          <ul class="list-group">
-            <li class="list-group-item">
-            <form id="update-show" method="post" >
-            <div class="form-check form-check-inline">
-              <input class="form-check-input check-show" type="checkbox" id="scroll-left" name="scroll-left" value="sLeft" {{ sLeftState }}>
-              <label class="form-check-label" for="scroll-left">Scroll Left</label>
-            </div>
-            <div class="form-check form-check-inline">
-              <input class="form-check-input check-show" type="checkbox" id="scroll-right" name="scroll-right" value="sRight" {{ sRightState }}>
-              <label class="form-check-label" for="scroll-right">Scroll Right</label>
-            </div>
-            <div class="form-check form-check-inline">
-              <input class="form-check-input check-show" type="checkbox" id="fade" name="fade" value="sFade" {{ sFadeState }}> 
-              <label class="form-check-label" for="fade">Fade</label>
-            </div>
-            <div class="form-check form-check-inline">
-              <input class="form-check-input check-show" type="checkbox" id="split" name="split" value="sSplit" {{ sSplitState }}>
-              <label class="form-check-label" for="split">Split</label>
-            </div>
-            <div class="form-check form-check-inline">
-              <input class="form-check-input check-show" type="checkbox" id="show-image" name="show-image" value="sImage" {{ sImageState }}>
-              <label class="form-check-label" for="show-image">Show Image</label>
-            </div>
-            </li>
-            <li class="list-group-item">
-              <div class="update-show-but">
-                <button
-                  data-bs-toggle="modal"
-                  data-bs-target="#busyDialog"
-                  type="submit"
-                  class="btn btn-secondary btn-md "
-                >
-                  Update Show
-                </button>
-            </li>
-          </form>
-          </ul>
       </div>
     </div>
   </div>

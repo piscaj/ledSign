@@ -18,7 +18,7 @@ class mySign:
     showFade = True
     showSplit = True
     showImage = False
-    myImagePath = ""
+    myImagePath = "static/uploads/unicorn.png"
     powerOffMessage
     powerOffMessage.clear
     powerOffMessage.add_font(
@@ -63,9 +63,9 @@ class mySign:
         self.sign.show(self.newMessage)
         self.sign.sleep(1)
         self.sign.hide(self.newMessage)
-        if (self.myImagePath) and (self.showImage):
-            self.newMessage.add_image(
-                self.myImagePath)
+        #if (self.myImagePath) and (self.showImage):
+        #    self.newMessage.add_image(
+        #        self.myImagePath)
         self.newMessage.add_font(
             "comic", "/usr/share/fonts/truetype/msttcorefonts/Comic_Sans_MS.ttf", 14)
         self.newMessage.set_stroke(1, strokeColor)
@@ -95,6 +95,8 @@ class mySign:
             if self.killSign:
                 self.sign.set_background_color(
                 ImageColor.getcolor(self.myBackgroundColor, "RGB"))
+            if (self.killSign) and (self.showImage):
+                self.sign.set_background_image(self.myImagePath)
             if (self.killSign) and (self.showSplit):
                 self.sign.join_in_vertically(self.newMessage)
             if (self.killSign) and (self.showScrollLeft):
