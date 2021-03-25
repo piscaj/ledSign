@@ -9,7 +9,8 @@ from mysign import mySign
 from werkzeug.utils import secure_filename
 from PIL import Image
 from resizeimage import resizeimage
-
+import mqtt
+ 
 UPLOADS_PATH = join(dirname(realpath(__file__)), 'static/uploads')
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'bmp', 'ppm'}
 
@@ -17,11 +18,6 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOADS_PATH
 
 sign = mySign()
-
-text = "It's time for dinner..."
-textColor = 0x00a0b0
-strokeColor = (255, 255, 255)
-
 
 # Start Celery client ###############
 #app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
@@ -67,8 +63,10 @@ def index():
         matrixPowerState = 'checked'
     else:
         matrixPowerState = 'unchecked'
-
-    neoPixlPowerState = 'unchecked'
+    if mqtt.neoPixlPowerStatus == "ON":
+        neoPixlPowerState = 'checked'
+    else:
+        neoPixlPowerState = 'unchecked'
     return render_template('index.html', matrixSwitchState=matrixPowerState,
                            neoPixlSwitchState=neoPixlPowerState)
 
@@ -134,12 +132,14 @@ def matrixOff():
 
 @app.route('/NeoPixlOn')
 def neoPixlOn():
+    mqtt.publishMessage("ledStrip/power","ON")
     print('Powering NeoPixl Strip On...')
     return "Nothing"
 
 
 @app.route('/NeoPixlOff')
 def neoPixlOff():
+    mqtt.publishMessage("ledStrip/power","OFF")
     print('Powering NeoPixl Strip Off...')
     return "Nothing"
 

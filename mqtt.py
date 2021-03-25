@@ -2,15 +2,36 @@
 import time
 import paho.mqtt.client as mqtt
 
+neoPixlPowerStatus = "OFF"
+neoPixlPreset = ""
+mqttConnected = False
+
 # Will be called upon reception of CONNACK response from the server.
 def on_connect(client, data, flags, rc):
+    mqttConnected = True
     client.subscribe("ledStrip/status", 1)
+    client.subscribe("ledStrip/preset", 1)
 
 def on_message(client, data, msg):
+    global neoPixlPowerStatus, neoPixlPreset
     print("Received message: " ,str(msg.topic+" "+msg.payload.decode("utf-8")))
+    if str(msg.topic) == "ledStrip/status":
+        if str(msg.payload.decode("utf-8")) == "ON":
+            neoPixlPowerStatus = "ON"
+        elif str(msg.payload.decode("utf-8")) == "OFF":
+            neoPixlPowerStatus = "OFF"
+        
+        
+    
     
 def publishMessage(topic,message):
-    client.publish(topic, message,1)
+    try:
+        client.publish(topic, message,1)
+    except:
+        mqttConnected = False
+        print("MQTT connection lost.")
+    
+        
 
 client = mqtt.Client()
 client.on_connect = on_connect
