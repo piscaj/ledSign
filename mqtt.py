@@ -12,6 +12,7 @@ def on_connect(client, data, flags, rc):
     client.subscribe("ledStrip/status", 1)
     client.subscribe("ledStrip/preset", 1)
 
+#Recieve message from subscription
 def on_message(client, data, msg):
     global neoPixlPowerStatus, neoPixlPreset
     print("Received message: " ,str(msg.topic+" "+msg.payload.decode("utf-8")))
@@ -20,10 +21,8 @@ def on_message(client, data, msg):
             neoPixlPowerStatus = "ON"
         elif str(msg.payload.decode("utf-8")) == "OFF":
             neoPixlPowerStatus = "OFF"
-        
-        
-    
-    
+         
+#Publish message to topic   
 def publishMessage(topic,message):
     try:
         client.publish(topic, message,1)

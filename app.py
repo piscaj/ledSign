@@ -38,25 +38,21 @@ assets.register('scss_all', scss)
 fa = FontAwesome(app)
 #####################################
 
-# Flask Routes ######################
-
+# Resize images using resizeimage module ######################
 def resize_image(file):
     with Image.open(file) as image:
         print(image)
         img = resizeimage.resize_contain(image, [64, 32])
         img.save(file, image.format)
-        
-    #fd_img = open(file, 'r')
-    #img = Image.open(file)
-    #img = resizeimage.resize_contain(img, [32, 64])
-    #img.save(file, img.format)
-    #img.save(file,"PNG")
-    #fd_img.close()
 
+# heck allowed file extensions for upload ######################
+def resize_image(file):
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+
+# Flask routes start ######################
 @app.route("/")
 def index():
     if sign.isRunning:
