@@ -11,6 +11,7 @@ def on_connect(client, data, flags, rc):
     mqttConnected = True
     client.subscribe("ledStrip/status", 1)
     client.subscribe("ledStrip/preset", 1)
+    client.subscribe("ledStrip/power", 1)
 
 #Recieve message from subscription
 def on_message(client, data, msg):

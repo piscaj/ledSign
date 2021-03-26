@@ -46,7 +46,6 @@ def resize_image(file):
         img.save(file, image.format)
 
 # heck allowed file extensions for upload ######################
-def resize_image(file):
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
