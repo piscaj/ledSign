@@ -31,8 +31,6 @@ def publishMessage(topic,message):
         mqttConnected = False
         print("MQTT connection lost.")
     
-        
-
 client = mqtt.Client()
 client.on_connect = on_connect
 client.on_message = on_message

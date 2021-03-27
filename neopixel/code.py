@@ -1,16 +1,17 @@
 import time
 import board
 import busio
-from digitalio import DigitalInOut
 import neopixel
+from digitalio import DigitalInOut
 from adafruit_esp32spi import adafruit_esp32spi
 from adafruit_esp32spi import adafruit_esp32spi_wifimanager
 import adafruit_esp32spi.adafruit_esp32spi_socket as socket
-from fade import Fader
-
 import adafruit_minimqtt.adafruit_minimqtt as MQTT
+from fade import Fader
+import gradient
 
 count = 0
+neoPixelPowerState = "OFF"
 
 # Set up NeoPixel
 pixel_pin = board.A1
@@ -57,6 +58,7 @@ def disconnected(client, userdata, rc):
 
 
 def message(client, topic, message):
+    global neoPixelPowerState
     """Method callled when a client's subscribed feed has a new
     value.
     :param str topic: The topic of the feed with a new value.
@@ -65,12 +67,14 @@ def message(client, topic, message):
     print("New message on topic {0}: {1}".format(topic, message))
     if topic == "ledStrip/power":
         if message == "ON":
-            fadeColor(1)
+            setColor(PURPLE)
             mqtt_client.publish("ledStrip/status", "ON")
+            neoPixelPowerState = "ON"
         elif message == "OFF":
             fadeColor(0)
             setColor(BLACK)
             mqtt_client.publish("ledStrip/status", "OFF")
+            neoPixelPowerState = "OFF"
 
 
 
@@ -169,10 +173,11 @@ while True:
             previous = fader.color
         if count == 5000:
             mqtt_client.loop()
-            print("MQTT Polled")
+            mqtt_client.publish("ledStrip/status", neoPixelPowerState)
             count=0
     else:
         count = 0
         mqtt_client.loop()
         time.sleep(0.5)
+        mqtt_client.publish("ledStrip/status", neoPixelPowerState)
 
