@@ -3,7 +3,9 @@ import board
 import neopixel
 from fade import Fader
 from gradient import *
-import mqtt 
+import wifi
+import adafruit_minimqtt.adafruit_minimqtt as MQTT
+import adafruit_esp32spi.adafruit_esp32spi_socket as socket
 
 count = 0
 
@@ -12,6 +14,71 @@ pixel_pin = board.A1
 num_pixels = 240
 pixels = neopixel.NeoPixel(pixel_pin, num_pixels, brightness=1.0, auto_write=False)
 
+neoPixelPowerState = "OFF"
+Isconnected = False
+
+# Get MQTT details and more from a secrets.py file
+try:
+    from secrets import secrets
+except ImportError:
+    print("MQTT secrets are kept in secrets.py, please add them there!")
+    raise
+
+# Initialize MQTT interface with the esp interface
+MQTT.set_socket(socket, wifi.esp)
+
+# Set up a MiniMQTT Client
+mqtt_client = MQTT.MQTT(broker=secrets["broker"],port=secrets["port"])
+
+### MQTT Code ###
+# Define callback methods which are called when events occur
+# pylint: disable=unused-argument, redefined-outer-name
+
+def connected(client, userdata, flags, rc):
+    global Isconnected
+    Isconnected = True
+    # This function will be called when the client is connected
+    # successfully to the broker.
+    print("Connected to MQTT broker!")
+    # Subscribe to all changes on the default_topic feed.
+    client.subscribe("ledStrip/power")
+    client.subscribe("ledStrip/preset")
+
+
+def disconnected(client, userdata, rc):
+    global Isconnected
+    Isconnected = False
+    # This method is called when the client is disconnected
+    print("Disconnected from MQTT Broker!")
+
+
+def message(client, topic, message):
+    global neoPixelPowerState
+    """Method callled when a client's subscribed feed has a new
+    value.
+    :param str topic: The topic of the feed with a new value.
+    :param str message: The new value
+    """
+    print("New message on topic {0}: {1}".format(topic, message))
+    if topic == "ledStrip/power":
+        if message == "ON":
+            rainbow_cycle(0)
+            mqtt_client.publish("ledStrip/status", "ON")
+            neoPixelPowerState = "ON"
+        elif message == "OFF":
+            fadeColor(0)
+            setColor(BLACK)
+            mqtt_client.publish("ledStrip/status", "OFF")
+            neoPixelPowerState = "OFF"
+
+
+# Setup the callback methods above
+mqtt_client.on_connect = connected
+mqtt_client.on_disconnect = disconnected
+mqtt_client.on_message = message
+
+# Connect the client to the MQTT broker.
+mqtt_client.connect()
 
 # NeoPixel ######################################
 
@@ -38,32 +105,33 @@ def wheel(pos):
     return (pos * 3, 0, 255 - pos * 3)
 
 def color_chase(color, wait):
-    mqtt.mqtt_client.publish("ledStrip/preset", "CHASE")
+    mqtt_client.publish("ledStrip/preset", "CHASE")
     for i in range(num_pixels):
         pixels[i] = color
         time.sleep(wait)
         pixels.show()
-        mqtt.mqtt.mqtt_client.loop()
-        mqtt.mqtt_client.publish("ledStrip/status", mqtt.neoPixelPowerState)
-    time.sleep(0.1)
+    mqtt_client.loop()
+    mqtt_client.publish("ledStrip/status", neoPixelPowerState)
+    mqtt_client.publish("ledStrip/preset", "CHASE")
 
 
 def rainbow_cycle(wait):
-    mqtt.mqtt_client.publish("ledStrip/preset", "RAINBOW")
+    mqtt_client.publish("ledStrip/preset", "RAINBOW")
     for j in range(255):
         for i in range(num_pixels):
             rc_index = (i * 256 // num_pixels) + j
             pixels[i] = wheel(rc_index & 255)
         pixels.show()
         time.sleep(wait)
-        mqtt.mqtt_client.loop()
-        mqtt.mqtt_client.publish("ledStrip/status", mqtt.neoPixelPowerState)
+    mqtt_client.loop()
+    mqtt_client.publish("ledStrip/status", neoPixelPowerState)
+    mqtt_client.publish("ledStrip/preset", "RAINBOW")
 
 def setColor(color):
-    mqtt.mqtt_client.publish("ledStrip/preset", "COLOR")
+    mqtt_client.publish("ledStrip/preset", "COLOR")
     pixels.fill(color)
     pixels.show()
-    
+
 def fadeColor(state):
     global fadeState
     if state == 1:
@@ -74,25 +142,25 @@ def fadeColor(state):
 pride = (4980736, 4980736, 4981248, 4982272, 4984064, 4986880, 4990720, 4996096, 3951616, 1592320, 412672, 19456, 13312, 5126, 1048, 60, 76, 65612, 327756, 852044, 1507367, 2359309, 3538946, 4980736)
 
 fader = Fader(pride)
-fadeState = True
+fadeState = False
 
 previous = None
 
 while True:
-    if fadeState:
-        count+=1
-        fader.update()
-        if fader.color != previous:
-            pixels.fill(fader.color)
-            pixels.write()
-            previous = fader.color
-        if count == 5000:
-            mqtt.mqtt_client.loop()
-            mqtt.mqtt_client.publish("ledStrip/status", mqtt.neoPixelPowerState)
-            count=0
-    else:
-        count = 0
-        mqtt.mqtt_client.loop()
-        time.sleep(3)
-        mqtt.mqtt_client.publish("ledStrip/status", mqtt.neoPixelPowerState)
-
+    if Isconnected:
+        if fadeState:
+            count+=1
+            fader.update()
+            if fader.color != previous:
+                pixels.fill(fader.color)
+                pixels.write()
+                previous = fader.color
+            if count == 5000:
+                mqtt_client.loop()
+                mqtt_client.publish("ledStrip/status", neoPixelPowerState)
+                count=0
+        else:
+            count = 0
+            mqtt_client.loop()
+            time.sleep(2)
+            mqtt_client.publish("ledStrip/status", neoPixelPowerState)

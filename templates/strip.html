@@ -1,14 +1,59 @@
 {% extends 'base.html' %} {% block content %}
 
-<section id="led-strip" class="details-container">
-  <div class="title">{% block title %} NeoPixl Led Strip {% endblock %}</div>
-  <div class="complete-table">
-    <div class="row">
-      <div class="col-12">
-        
+<!-- Modal -->
+<div
+  class="modal fade"
+  id="busyDialog"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
+  tabindex="-1"
+  aria-labelledby="busyDialogLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div class="loader mx-auto"></div>
+      </div>
+      <div class="modal-footer">
+        <h5 class="mx-auto">Please wait a moment</h5>
       </div>
     </div>
   </div>
+</div>
+<!-- Modal -->
+<section id="led-strip" class="container">
+  <div class="title">{% block title %} NeoPixel Led Strip {% endblock %}</div>
+  <div class="complete-table">
+    <div class="row">
+      <div class="col">
+        <form id="update-strip" method="post" enctype="multipart/form-data">
+          <ul class="list-group">
+            <li class="list-group-item">
+              <button
+              data-bs-toggle="modal"
+              data-bs-target="#busyDialog"
+              type="submit"
+              class="btn btn-secondary btn-md float-start color-bt"
+            >
+              Solid Color
+            </button>
+              <div class="colorPicker">
+                <input
+                  type="color"
+                  class="form-control form-control-color float-end"
+                  name="msgcolor"
+                  id="msgcolor"
+                  value="{{ lastTextColor }}"
+                  title="Choose your color"
+                />
+              </div>
+            </li>
+          </form>
+        </ul>
+        <br>
+    </div>
+  </div>
+</div>
 </section>
-
 {% endblock %}
