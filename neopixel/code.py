@@ -43,6 +43,7 @@ def connected(client, userdata, flags, rc):
     # Subscribe to all changes on the default_topic feed.
     client.subscribe("ledStrip/power")
     client.subscribe("ledStrip/preset")
+    client.subscribe("ledStrip/color")
 
 
 def disconnected(client, userdata, rc):
@@ -62,7 +63,7 @@ def message(client, topic, message):
     print("New message on topic {0}: {1}".format(topic, message))
     if topic == "ledStrip/power":
         if message == "ON":
-            rainbow_cycle(0)
+            setColor(WHITE)
             mqtt_client.publish("ledStrip/status", "ON")
             neoPixelPowerState = "ON"
         elif message == "OFF":
@@ -70,8 +71,9 @@ def message(client, topic, message):
             setColor(BLACK)
             mqtt_client.publish("ledStrip/status", "OFF")
             neoPixelPowerState = "OFF"
-
-
+    if topic == "ledStrip/color":
+        setColor(message)
+        
 # Setup the callback methods above
 mqtt_client.on_connect = connected
 mqtt_client.on_disconnect = disconnected
@@ -90,6 +92,7 @@ BLUE = (0, 0, 255)
 PURPLE = (180, 114, 204)
 PINK = (255, 5, 234)
 BLACK = (0, 0, 0)
+WHITE = (255, 255, 212)
 
 def wheel(pos):
     # Input a value 0 to 255 to get a color value.
@@ -106,6 +109,7 @@ def wheel(pos):
 
 def color_chase(color, wait):
     mqtt_client.publish("ledStrip/preset", "CHASE")
+    mqtt_client.publish("ledStrip/status", neoPixelPowerState)
     for i in range(num_pixels):
         pixels[i] = color
         time.sleep(wait)
@@ -117,6 +121,7 @@ def color_chase(color, wait):
 
 def rainbow_cycle(wait):
     mqtt_client.publish("ledStrip/preset", "RAINBOW")
+    mqtt_client.publish("ledStrip/status", neoPixelPowerState)
     for j in range(255):
         for i in range(num_pixels):
             rc_index = (i * 256 // num_pixels) + j
@@ -128,6 +133,7 @@ def rainbow_cycle(wait):
     mqtt_client.publish("ledStrip/preset", "RAINBOW")
 
 def setColor(color):
+    mqtt_client.publish("ledStrip/status", neoPixelPowerState) 
     mqtt_client.publish("ledStrip/preset", "COLOR")
     pixels.fill(color)
     pixels.show()

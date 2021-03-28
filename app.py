@@ -10,6 +10,9 @@ from werkzeug.utils import secure_filename
 from PIL import Image
 from resizeimage import resizeimage
 import mqtt
+from PIL import ImageColor
+
+lastStripColor = "#c203fc"
  
 UPLOADS_PATH = join(dirname(realpath(__file__)), 'static/uploads')
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'bmp', 'ppm'}
@@ -99,7 +102,7 @@ def matrix():
 
 @app.route("/strip")
 def strip():
-    return render_template('strip.html')
+    return render_template('strip.html', lastStripColor = lastStripColor)
 
 
 @app.route("/setup")
@@ -136,6 +139,17 @@ def neoPixlOn():
 def neoPixlOff():
     mqtt.publishMessage("ledStrip/power","OFF")
     print('Powering NeoPixl Strip Off...')
+    return "Nothing"
+
+@app.route('/updateStripColor', methods=["POST"])
+def updateStripColor():
+    global lastStripColor 
+    stripColor = request.form['stripcolor']
+    lastStripColor = stripColor
+    mqtt.publishMessage("ledStrip/power","ON")
+    stripColor=stripColor.replace("#", "0x")
+    mqtt.publishMessage("ledStrip/color",stripColor)
+    print('Seting NeoPixel color...')
     return "Nothing"
 
 
