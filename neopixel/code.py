@@ -72,8 +72,10 @@ def message(client, topic, message):
             mqtt_client.publish("ledStrip/status", "OFF")
             neoPixelPowerState = "OFF"
     if topic == "ledStrip/color":
-        setColor(message)
-        
+        color = message.lstrip('0x')
+        color = tuple(int(color[i:i+2], 16) for i in (0, 2, 4))
+        setColor(color)
+
 # Setup the callback methods above
 mqtt_client.on_connect = connected
 mqtt_client.on_disconnect = disconnected
@@ -109,19 +111,21 @@ def wheel(pos):
 
 def color_chase(color, wait):
     mqtt_client.publish("ledStrip/preset", "CHASE")
-    mqtt_client.publish("ledStrip/status", neoPixelPowerState)
+    mqtt_client.publish("ledStrip/status", "ON")
+    neoPixelPowerState = "ON"
     for i in range(num_pixels):
         pixels[i] = color
         time.sleep(wait)
         pixels.show()
     mqtt_client.loop()
-    mqtt_client.publish("ledStrip/status", neoPixelPowerState)
+    mqtt_client.publish("ledStrip/status", "ON")
     mqtt_client.publish("ledStrip/preset", "CHASE")
 
 
 def rainbow_cycle(wait):
     mqtt_client.publish("ledStrip/preset", "RAINBOW")
-    mqtt_client.publish("ledStrip/status", neoPixelPowerState)
+    mqtt_client.publish("ledStrip/status", "ON")
+    neoPixelPowerState = "ON"
     for j in range(255):
         for i in range(num_pixels):
             rc_index = (i * 256 // num_pixels) + j
@@ -129,12 +133,13 @@ def rainbow_cycle(wait):
         pixels.show()
         time.sleep(wait)
     mqtt_client.loop()
-    mqtt_client.publish("ledStrip/status", neoPixelPowerState)
+    mqtt_client.publish("ledStrip/status", "ON")
     mqtt_client.publish("ledStrip/preset", "RAINBOW")
 
 def setColor(color):
-    mqtt_client.publish("ledStrip/status", neoPixelPowerState) 
     mqtt_client.publish("ledStrip/preset", "COLOR")
+    mqtt_client.publish("ledStrip/status", "ON")
+    neoPixelPowerState = "ON"
     pixels.fill(color)
     pixels.show()
 

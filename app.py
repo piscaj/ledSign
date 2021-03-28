@@ -146,7 +146,6 @@ def updateStripColor():
     global lastStripColor 
     stripColor = request.form['stripcolor']
     lastStripColor = stripColor
-    mqtt.publishMessage("ledStrip/power","ON")
     stripColor=stripColor.replace("#", "0x")
     mqtt.publishMessage("ledStrip/color",stripColor)
     print('Seting NeoPixel color...')
