@@ -8,6 +8,9 @@ import adafruit_minimqtt.adafruit_minimqtt as MQTT
 import adafruit_esp32spi.adafruit_esp32spi_socket as socket
 
 count = 0
+fadeState = False
+colorChaseState = False
+colorChaseColors = ""
 
 # Set up NeoPixel strip
 pixel_pin = board.A1
@@ -55,6 +58,8 @@ def disconnected(client, userdata, rc):
 
 def message(client, topic, message):
     global neoPixelPowerState
+    global colorChaseState
+    global colorChaseColors
     """Method callled when a client's subscribed feed has a new
     value.
     :param str topic: The topic of the feed with a new value.
@@ -68,13 +73,23 @@ def message(client, topic, message):
             neoPixelPowerState = "ON"
         elif message == "OFF":
             fadeColor(0)
+            colorChaseState = False
             setColor(BLACK)
             mqtt_client.publish("ledStrip/status", "OFF")
             neoPixelPowerState = "OFF"
     if topic == "ledStrip/color":
-        color = message.lstrip('0x')
+        fadeColor(0)
+        colorChaseState = False
+        color = message
         color = tuple(int(color[i:i+2], 16) for i in (0, 2, 4))
         setColor(color)
+    if topic == "ledStrip/chase":
+        fadeColor(0)
+        colorChaseColors = ""
+        colorChaseColors = message.split(",")
+        for x in range(4): 
+            colorChaseColors[x] = tuple(int(colorChaseColors[x][i:i+2], 16) for i in (0, 2, 4))
+        colorChaseState = True
 
 # Setup the callback methods above
 mqtt_client.on_connect = connected
@@ -110,6 +125,7 @@ def wheel(pos):
     return (pos * 3, 0, 255 - pos * 3)
 
 def color_chase(color, wait):
+    global neoPixelPowerState
     mqtt_client.publish("ledStrip/preset", "CHASE")
     mqtt_client.publish("ledStrip/status", "ON")
     neoPixelPowerState = "ON"
@@ -123,6 +139,7 @@ def color_chase(color, wait):
 
 
 def rainbow_cycle(wait):
+    global neoPixelPowerState
     mqtt_client.publish("ledStrip/preset", "RAINBOW")
     mqtt_client.publish("ledStrip/status", "ON")
     neoPixelPowerState = "ON"
@@ -137,6 +154,7 @@ def rainbow_cycle(wait):
     mqtt_client.publish("ledStrip/preset", "RAINBOW")
 
 def setColor(color):
+    global neoPixelPowerState
     mqtt_client.publish("ledStrip/preset", "COLOR")
     mqtt_client.publish("ledStrip/status", "ON")
     neoPixelPowerState = "ON"
@@ -153,7 +171,6 @@ def fadeColor(state):
 pride = (4980736, 4980736, 4981248, 4982272, 4984064, 4986880, 4990720, 4996096, 3951616, 1592320, 412672, 19456, 13312, 5126, 1048, 60, 76, 65612, 327756, 852044, 1507367, 2359309, 3538946, 4980736)
 
 fader = Fader(pride)
-fadeState = False
 
 previous = None
 
@@ -167,6 +184,14 @@ while True:
                 pixels.write()
                 previous = fader.color
             if count == 5000:
+                mqtt_client.loop()
+                mqtt_client.publish("ledStrip/status", neoPixelPowerState)
+                count=0
+        if colorChaseState:
+            count+=1
+            if count < 5:
+                color_chase(colorChaseColors[count],0)
+            elif count > 4:
                 mqtt_client.loop()
                 mqtt_client.publish("ledStrip/status", neoPixelPowerState)
                 count=0

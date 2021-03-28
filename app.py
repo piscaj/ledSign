@@ -13,7 +13,13 @@ import mqtt
 from PIL import ImageColor
 
 lastStripColor = "#c203fc"
- 
+
+lastChaseColor1 = "#c203fc"
+lastChaseColor2 = "#92eb34"
+lastChaseColor3 = "#eb3434"
+lastChaseColor4 = "#3d34eb"
+
+
 UPLOADS_PATH = join(dirname(realpath(__file__)), 'static/uploads')
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'bmp', 'ppm'}
 
@@ -102,7 +108,8 @@ def matrix():
 
 @app.route("/strip")
 def strip():
-    return render_template('strip.html', lastStripColor = lastStripColor)
+    return render_template('strip.html', lastStripColor = lastStripColor, lastChaseColor1 = lastChaseColor1, lastChaseColor2 = lastChaseColor2,
+                           lastChaseColor3 = lastChaseColor3, lastChaseColor4 = lastChaseColor4)
 
 
 @app.route("/setup")
@@ -145,12 +152,20 @@ def neoPixlOff():
 def updateStripColor():
     global lastStripColor 
     stripColor = request.form['stripcolor']
-    lastStripColor = stripColor
-    stripColor=stripColor.replace("#", "0x")
+    lastStripColor = stripColor.lstrip('#')
     mqtt.publishMessage("ledStrip/color",stripColor)
-    print('Seting NeoPixel color...')
     return "Nothing"
 
+@app.route('/updateChaseColor', methods=["POST"])
+def updateChaseColor():
+    global lastChaseColor1,lastChaseColor2,lastChaseColor3,lastChaseColor4 
+    lastChaseColor1 = request.form['chasecolor1']
+    lastChaseColor2 = request.form['chasecolor2']
+    lastChaseColor3 = request.form['chasecolor3']
+    lastChaseColor4 = request.form['chasecolor4']
+    chaseColor = lastChaseColor1.lstrip('#'),lastChaseColor2.lstrip('#'),lastChaseColor3.lstrip('#'),lastChaseColor4.lstrip('#')
+    mqtt.publishMessage("ledStrip/chase",str(chaseColor))
+    return "Nothing"
 
 @app.route('/updateMatrix', methods=["POST"])
 def updateMatrix():
