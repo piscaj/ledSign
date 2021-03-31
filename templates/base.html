@@ -149,6 +149,21 @@
             }
         });
     });
+
+    $('#update-strip-pong').submit(function(e){
+      e.preventDefault();
+      $.ajax({
+          url: '/updatePongColor',
+          type: 'post',
+          data:$('#update-strip-pong').serialize(),
+          success:function(){
+            setTimeout(function () {
+              //alert('Reloading Page');
+              window.location.href = "{{ url_for('strip')}}";
+            }, 5000);
+          }
+      });
+  });
         
 
 </script>

@@ -10,7 +10,9 @@ import adafruit_esp32spi.adafruit_esp32spi_socket as socket
 count = 0
 fadeState = False
 colorChaseState = False
+colorPongState = False
 colorChaseColors = ""
+colorPongColors = ""
 
 # Set up NeoPixel strip
 pixel_pin = board.A1
@@ -47,6 +49,8 @@ def connected(client, userdata, flags, rc):
     client.subscribe("ledStrip/power")
     client.subscribe("ledStrip/preset")
     client.subscribe("ledStrip/color")
+    client.subscribe("ledStrip/chase")
+    client.subscribe("ledStrip/pong")
 
 
 def disconnected(client, userdata, rc):
@@ -60,6 +64,8 @@ def message(client, topic, message):
     global neoPixelPowerState
     global colorChaseState
     global colorChaseColors
+    global colorPongColors
+    global colorPongState
     """Method callled when a client's subscribed feed has a new
     value.
     :param str topic: The topic of the feed with a new value.
@@ -74,22 +80,33 @@ def message(client, topic, message):
         elif message == "OFF":
             fadeColor(0)
             colorChaseState = False
+            colorPongState = False
             setColor(BLACK)
             mqtt_client.publish("ledStrip/status", "OFF")
             neoPixelPowerState = "OFF"
-    if topic == "ledStrip/color":
+    elif topic == "ledStrip/color":
         fadeColor(0)
         colorChaseState = False
+        colorPongState = False
         color = message
         color = tuple(int(color[i:i+2], 16) for i in (0, 2, 4))
         setColor(color)
-    if topic == "ledStrip/chase":
+    elif topic == "ledStrip/chase":
         fadeColor(0)
+        colorPongState = False
         colorChaseColors = ""
         colorChaseColors = message.split(",")
-        for x in range(4): 
+        for x in range(4):
             colorChaseColors[x] = tuple(int(colorChaseColors[x][i:i+2], 16) for i in (0, 2, 4))
         colorChaseState = True
+    elif topic == "ledStrip/pong":
+        fadeColor(0)
+        colorChaseState = False
+        colorPongColors = ""
+        colorPongColors = message.split(",")
+        for x in range(4):
+            colorPongColors[x] = tuple(int(colorPongColors[x][i:i+2], 16) for i in (0, 2, 4))
+        colorPongState = True
 
 # Setup the callback methods above
 mqtt_client.on_connect = connected
@@ -124,6 +141,24 @@ def wheel(pos):
     pos -= 170
     return (pos * 3, 0, 255 - pos * 3)
 
+def color_pong(color, direction):
+    global neoPixelPowerState
+    mqtt_client.publish("ledStrip/preset", "PONG")
+    mqtt_client.publish("ledStrip/status", "ON")
+    neoPixelPowerState = "ON"
+    if direction == "ping":
+        for i in range(num_pixels):
+            pixels[i] = color
+            pixels.show()
+    elif direction == "pong":
+        for i in reversed(range(num_pixels + 1)):
+            print(i)
+            pixels[i] = color
+            pixels.show()
+    mqtt_client.loop()
+    mqtt_client.publish("ledStrip/status", "ON")
+    mqtt_client.publish("ledStrip/preset", "PONG")
+
 def color_chase(color, wait):
     global neoPixelPowerState
     mqtt_client.publish("ledStrip/preset", "CHASE")
@@ -136,7 +171,6 @@ def color_chase(color, wait):
     mqtt_client.loop()
     mqtt_client.publish("ledStrip/status", "ON")
     mqtt_client.publish("ledStrip/preset", "CHASE")
-
 
 def rainbow_cycle(wait):
     global neoPixelPowerState
@@ -187,11 +221,21 @@ while True:
                 mqtt_client.loop()
                 mqtt_client.publish("ledStrip/status", neoPixelPowerState)
                 count=0
-        if colorChaseState:
+        elif colorChaseState:
             count+=1
-            if count < 5:
-                color_chase(colorChaseColors[count],0)
-            elif count > 4:
+            if count <= 4:
+                color_chase(colorChaseColors[count-1],0)
+            else:
+                mqtt_client.loop()
+                mqtt_client.publish("ledStrip/status", neoPixelPowerState)
+                count=0
+        elif colorPongState:
+            count+=1
+            if count == 1 or count == 3:
+                color_pong(colorPongColors[count-1],"ping")
+            elif count == 2 or count == 4:
+                color_pong(colorPongColors[count-1],"pong")
+            else:
                 mqtt_client.loop()
                 mqtt_client.publish("ledStrip/status", neoPixelPowerState)
                 count=0

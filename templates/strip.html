@@ -103,6 +103,59 @@
                 </div>
               </li>
             </form>
+            <form id="update-strip-pong" method="post" enctype="multipart/form-data">
+              <ul class="list-group">
+                <li class="list-group-item">
+                  <button
+                  data-bs-toggle="modal"
+                  data-bs-target="#busyDialog"
+                  type="submit"
+                  class="btn btn-secondary btn-md float-start chase-bt"
+                >
+                  Color Pong
+                </button>
+                  <div class="colorPicker">
+                    <input
+                      type="color"
+                      class="form-control form-control-color float-end"
+                      name="pongcolor1"
+                      id="pongcolor1"
+                      value="{{ lastPongColor1 }}"
+                      title="Choose your color"
+                    />
+                  </div>
+                  <div class="colorPicker">
+                    <input
+                      type="color"
+                      class="form-control form-control-color float-end"
+                      name="pongcolor2"
+                      id="pongcolor2"
+                      value="{{ lastPongColor2 }}"
+                      title="Choose your color"
+                    />
+                  </div>
+                  <div class="colorPicker">
+                    <input
+                      type="color"
+                      class="form-control form-control-color float-end"
+                      name="pongcolor3"
+                      id="pongcolor3"
+                      value="{{ lastPongColor3 }}"
+                      title="Choose your color"
+                    />
+                  </div>
+                  <div class="colorPicker">
+                    <input
+                      type="color"
+                      class="form-control form-control-color float-end"
+                      name="pongcolor4"
+                      id="pongcolor4"
+                      value="{{ lastPongColor4 }}"
+                      title="Choose your color"
+                    />
+                  </div>
+                </li>
+              </form>
         </ul>
         <br>
     </div>
