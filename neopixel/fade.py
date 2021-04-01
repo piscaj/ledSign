@@ -10,6 +10,9 @@ class Fader:
         self.palette = palette
         self.max = len(self.palette)*interval
         self.epoch = 0
+        
+    def updatePalette(self,gradient):
+        self.palette = gradient
 
     def update(self):
         self.epoch = time.monotonic() - self.checkin

@@ -13,6 +13,7 @@ colorChaseState = False
 colorPongState = False
 colorChaseColors = ""
 colorPongColors = ""
+previous = None
 
 # Set up NeoPixel strip
 pixel_pin = board.A1
@@ -60,11 +61,11 @@ def connected(client, userdata, flags, rc):
 def disconnected(client, userdata, rc):
     global Isconnected
     Isconnected = False
-    # This method is called when the client is disconnected
+    # This method is called when the client is disconnected from the broker
     print("Disconnected from MQTT Broker!")
 
+# This function is used for sending messages on a topic
 def publish(topic,message):
-
     try:
         mqtt_client.publish(topic, message)
 
@@ -75,19 +76,13 @@ def publish(topic,message):
         wifi.wifi.connect()
         print("Connected!")
 
-
-
 def message(client, topic, message):
     global neoPixelPowerState
     global colorChaseState
     global colorChaseColors
-    global colorPongColors
     global colorPongState
-    """Method callled when a client's subscribed feed has a new
-    value.
-    :param str topic: The topic of the feed with a new value.
-    :param str message: The new value
-    """
+    global colorPongColors
+    
     try:
         print("New message on topic {0}: {1}".format(topic, message))
         if topic == "ledStrip/power":
@@ -131,7 +126,6 @@ def message(client, topic, message):
         print("Connecting to WiFi...")
         wifi.wifi.connect()
         print("Connected!")
-
 
 # Setup the callback methods above
 mqtt_client.on_connect = connected
@@ -217,11 +211,10 @@ def fadeColor(state):
     elif state == 0:
         fadeState = False
 
-pride = (4980736, 4980736, 4981248, 4982272, 4984064, 4986880, 4990720, 4996096, 3951616, 1592320, 412672, 19456, 13312, 5126, 1048, 60, 76, 65612, 327756, 852044, 1507367, 2359309, 3538946, 4980736)
+fader = Fader(gradient.pastels10)
 
-fader = Fader(pride)
-
-previous = None
+def updatefader(gradient):
+    fader.updatePalette(gradient)
 
 while True:
     if Isconnected:
