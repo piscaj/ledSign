@@ -185,6 +185,27 @@ def updatePongColor():
     mqtt.publishMessage("ledStrip/pong",chaseColor)
     return "Nothing"
 
+@app.route('/updateFadeColor', methods=["POST"])
+def updateFadeColor():
+    fadePalette = {
+        1: "pride24",
+        2: "halloween24",
+        3: "anna_howard_shaw24",
+        4: "pastels24",
+        5: "rgb24",
+        6: "july4th24",
+        7: "ireland24",
+        8: "icy24",
+        9: "gray24",
+        10: "white_to_off24",
+        11: "green_to_off24",
+        12: "red_to_off24",
+        13: "blue_to_off24",
+    }
+    palette = fadePalette.get(int(request.form.get("fade-color")), "NOSELECTION")
+    mqtt.publishMessage("ledStrip/fade",palette)
+    return "Nothing"
+
 @app.route('/updateMatrix', methods=["POST"])
 def updateMatrix():
     sLeft, sRight, sFade, sSplit, sImage = False, False, False, False, False

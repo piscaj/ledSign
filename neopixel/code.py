@@ -15,6 +15,8 @@ colorChaseColors = ""
 colorPongColors = ""
 previous = None
 
+fader = Fader(gradient.july4th24[1])
+
 # Set up NeoPixel strip
 pixel_pin = board.A1
 num_pixels = 240
@@ -56,6 +58,7 @@ def connected(client, userdata, flags, rc):
     client.subscribe("ledStrip/color")
     client.subscribe("ledStrip/chase")
     client.subscribe("ledStrip/pong")
+    client.subscribe("ledStrip/fade")
 
 
 def disconnected(client, userdata, rc):
@@ -95,8 +98,6 @@ def publish(topic,message):
         wifi.wifi.connect()
         print("Connected!")
         mqtt_client.connect()
-
-
 
 def message(client, topic, message):
     global neoPixelPowerState
@@ -146,6 +147,13 @@ def message(client, topic, message):
             for x in range(4):
                 colorPongColors[x] = tuple(int(colorPongColors[x][i:i+2], 16) for i in (0, 2, 4))
             colorPongState = True
+        elif topic == "ledStrip/fade":
+            global fader
+            colorPongState = False 
+            colorChaseState = False
+            fader = Fader(gradient.message[1])
+            fadeColor(1)
+
     except (ValueError, RuntimeError) as e:
         print("Failed to recieve message", e)
         print("Reseting WiFi...")
@@ -240,12 +248,7 @@ def fadeColor(state):
         fadeState = True
     elif state == 0:
         fadeState = False
-pride = (4980736, 4980736, 4981248, 4982272, 4984064, 4986880, 4990720, 4996096, 3951616, 1592320, 412672, 19456, 13312, 5126, 1048, 60, 76, 65612, 327756, 852044, 1507367, 2359309, 3538946, 4980736)
 
-
-fader = Fader(gradient.halloween24[1])
-
-fadeColor(1)
 while True:
     if Isconnected:
         if fadeState:
