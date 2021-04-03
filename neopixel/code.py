@@ -1,4 +1,4 @@
-import time
+import time,random
 import board
 import neopixel
 from fade import Fader
@@ -149,10 +149,48 @@ def message(client, topic, message):
             colorPongState = True
         elif topic == "ledStrip/fade":
             global fader
-            colorPongState = False 
+            colorPongState = False
             colorChaseState = False
-            fader = Fader(gradient.message[1])
-            fadeColor(1)
+            r=random.randint(0,5)
+            if message == "pride24":
+                fader = Fader(gradient.pride24[r])
+                fadeColor(1)
+            elif message == "halloween24":
+                fader = Fader(gradient.halloween24[r])
+                fadeColor(1)
+            elif message == "anna_howard_shaw24":
+                fader = Fader(gradient.anna_howard_shaw24[r])
+                fadeColor(1)
+            elif message == "pastels24":
+                fader = Fader(gradient.pastels24[r])
+                fadeColor(1)
+            elif message == "rgb24":
+                fader = Fader(gradient.rgb24[r])
+                fadeColor(1)
+            elif message == "july4th24":
+                fader = Fader(gradient.july4th24[r])
+                fadeColor(1)
+            elif message == "ireland24":
+                fader = Fader(gradient.ireland24[r])
+                fadeColor(1)
+            elif message == "icy24":
+                fader = Fader(gradient.icy24[r])
+                fadeColor(1)
+            elif message == "gray24":
+                fader = Fader(gradient.gray24[r])
+                fadeColor(1)
+            elif message == "white_to_off24":
+                fader = Fader(gradient.white_to_off24[r])
+                fadeColor(1)
+            elif message == "green_to_off24":
+                fader = Fader(gradient.green_to_off24[r])
+                fadeColor(1)
+            elif message == "red_to_off24":
+                fader = Fader(gradient.red_to_off24[r])
+                fadeColor(1)
+            elif message == "blue_to_off24":
+                fader = Fader(gradient.blue_to_off24[r])
+                fadeColor(1)
 
     except (ValueError, RuntimeError) as e:
         print("Failed to recieve message", e)

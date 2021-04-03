@@ -3,7 +3,7 @@ import neopixel
 import time
 
 class Fader:
-    def __init__(self, palette, interval=0.05):
+    def __init__(self, palette, interval=0.07):
         self.checkin = time.monotonic()
         self.color = 0
         self.interval = interval
