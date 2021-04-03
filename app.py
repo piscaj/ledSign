@@ -57,6 +57,7 @@ def resize_image(file):
     with Image.open(file) as image:
         print(image)
         img = resizeimage.resize_contain(image, [64, 32])
+        img = img.convert("RGB")
         img.save(file, image.format)
 
 # heck allowed file extensions for upload ######################

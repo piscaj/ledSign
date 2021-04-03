@@ -27,17 +27,21 @@
   <div class="complete-table">
     <div class="row">
       <div class="col">
-        <form id="update-strip-color" method="post" enctype="multipart/form-data">
-          <ul class="list-group">
+        <ul class="list-group">
             <li class="list-group-item">
+              <form
+            id="update-strip-color"
+            method="post"
+            enctype="multipart/form-data"
+          >
               <button
-              data-bs-toggle="modal"
-              data-bs-target="#busyDialog"
-              type="submit"
-              class="btn btn-secondary btn-md float-start color-bt"
-            >
-              Solid Color
-            </button>
+                data-bs-toggle="modal"
+                data-bs-target="#busyDialog"
+                type="submit"
+                class="btn btn-secondary btn-md float-start color-bt"
+              >
+                Solid Color
+              </button>
               <div class="colorPicker">
                 <input
                   type="color"
@@ -48,12 +52,15 @@
                   title="Choose your color"
                 />
               </div>
+            </form>
             </li>
-          </form>
-          <form id="update-strip-chase" method="post" enctype="multipart/form-data">
-            <ul class="list-group">
-              <li class="list-group-item">
-                <button
+            <li class="list-group-item">
+              <form
+            id="update-strip-chase"
+            method="post"
+            enctype="multipart/form-data"
+          >
+              <button
                 data-bs-toggle="modal"
                 data-bs-target="#busyDialog"
                 type="submit"
@@ -61,105 +68,125 @@
               >
                 Color Chase
               </button>
-                <div class="colorPicker">
-                  <input
-                    type="color"
-                    class="form-control form-control-color float-end"
-                    name="chasecolor1"
-                    id="chasecolor1"
-                    value="{{ lastChaseColor1 }}"
-                    title="Choose your color"
-                  />
-                </div>
-                <div class="colorPicker">
-                  <input
-                    type="color"
-                    class="form-control form-control-color float-end"
-                    name="chasecolor2"
-                    id="chasecolor2"
-                    value="{{ lastChaseColor2 }}"
-                    title="Choose your color"
-                  />
-                </div>
-                <div class="colorPicker">
-                  <input
-                    type="color"
-                    class="form-control form-control-color float-end"
-                    name="chasecolor3"
-                    id="chasecolor3"
-                    value="{{ lastChaseColor3 }}"
-                    title="Choose your color"
-                  />
-                </div>
-                <div class="colorPicker">
-                  <input
-                    type="color"
-                    class="form-control form-control-color float-end"
-                    name="chasecolor4"
-                    id="chasecolor4"
-                    value="{{ lastChaseColor4 }}"
-                    title="Choose your color"
-                  />
-                </div>
-              </li>
+              <div class="colorPicker">
+                <input
+                  type="color"
+                  class="form-control form-control-color float-end"
+                  name="chasecolor1"
+                  id="chasecolor1"
+                  value="{{ lastChaseColor1 }}"
+                  title="Choose your color"
+                />
+              </div>
+              <div class="colorPicker">
+                <input
+                  type="color"
+                  class="form-control form-control-color float-end"
+                  name="chasecolor2"
+                  id="chasecolor2"
+                  value="{{ lastChaseColor2 }}"
+                  title="Choose your color"
+                />
+              </div>
+              <div class="colorPicker">
+                <input
+                  type="color"
+                  class="form-control form-control-color float-end"
+                  name="chasecolor3"
+                  id="chasecolor3"
+                  value="{{ lastChaseColor3 }}"
+                  title="Choose your color"
+                />
+              </div>
+              <div class="colorPicker">
+                <input
+                  type="color"
+                  class="form-control form-control-color float-end"
+                  name="chasecolor4"
+                  id="chasecolor4"
+                  value="{{ lastChaseColor4 }}"
+                  title="Choose your color"
+                />
+              </div>
             </form>
-            <form id="update-strip-pong" method="post" enctype="multipart/form-data">
-              <ul class="list-group">
-                <li class="list-group-item">
-                  <button
-                  data-bs-toggle="modal"
-                  data-bs-target="#busyDialog"
-                  type="submit"
-                  class="btn btn-secondary btn-md float-start chase-bt"
-                >
-                  Color Pong
-                </button>
-                  <div class="colorPicker">
-                    <input
-                      type="color"
-                      class="form-control form-control-color float-end"
-                      name="pongcolor1"
-                      id="pongcolor1"
-                      value="{{ lastPongColor1 }}"
-                      title="Choose your color"
-                    />
-                  </div>
-                  <div class="colorPicker">
-                    <input
-                      type="color"
-                      class="form-control form-control-color float-end"
-                      name="pongcolor2"
-                      id="pongcolor2"
-                      value="{{ lastPongColor2 }}"
-                      title="Choose your color"
-                    />
-                  </div>
-                  <div class="colorPicker">
-                    <input
-                      type="color"
-                      class="form-control form-control-color float-end"
-                      name="pongcolor3"
-                      id="pongcolor3"
-                      value="{{ lastPongColor3 }}"
-                      title="Choose your color"
-                    />
-                  </div>
-                  <div class="colorPicker">
-                    <input
-                      type="color"
-                      class="form-control form-control-color float-end"
-                      name="pongcolor4"
-                      id="pongcolor4"
-                      value="{{ lastPongColor4 }}"
-                      title="Choose your color"
-                    />
-                  </div>
-                </li>
-              </form>
+            </li>
+            <li class="list-group-item">
+              <form
+              id="update-strip-pong"
+              method="post"
+              enctype="multipart/form-data"
+            >
+              <button
+                data-bs-toggle="modal"
+                data-bs-target="#busyDialog"
+                type="submit"
+                class="btn btn-secondary btn-md float-start pong-bt"
+              >
+                Color Pong
+              </button>
+              <div class="colorPicker">
+                <input
+                  type="color"
+                  class="form-control form-control-color float-end"
+                  name="pongcolor1"
+                  id="pongcolor1"
+                  value="{{ lastPongColor1 }}"
+                  title="Choose your color"
+                />
+              </div>
+              <div class="colorPicker">
+                <input
+                  type="color"
+                  class="form-control form-control-color float-end"
+                  name="pongcolor2"
+                  id="pongcolor2"
+                  value="{{ lastPongColor2 }}"
+                  title="Choose your color"
+                />
+              </div>
+              <div class="colorPicker">
+                <input
+                  type="color"
+                  class="form-control form-control-color float-end"
+                  name="pongcolor3"
+                  id="pongcolor3"
+                  value="{{ lastPongColor3 }}"
+                  title="Choose your color"
+                />
+              </div>
+              <div class="colorPicker">
+                <input
+                  type="color"
+                  class="form-control form-control-color float-end"
+                  name="pongcolor4"
+                  id="pongcolor4"
+                  value="{{ lastPongColor4 }}"
+                  title="Choose your color"
+                />
+              </div>
+            </form>
+            </li>
+          </li>
+          <li class="list-group-item">
+            <form
+            id="update-strip-fade"
+            method="post"
+            enctype="multipart/form-data"
+          >
+            <button
+              data-bs-toggle="modal"
+              data-bs-target="#busyDialog"
+              type="submit"
+              class="btn btn-secondary btn-md float-start fade-bt"
+            >
+              Fade Palette
+          </button>
+          </form>
+          </li>
         </ul>
-        <br>
+        <br />
+      </div>
     </div>
   </div>
-</div>
 </section>
 {% endblock %}

@@ -125,8 +125,8 @@
           </form>
         </ul>
         <br>
+        <form id="upload-image" method="post" enctype="multipart/form-data" action = "{{ url_for('upload')}}" >
         <ul class="list-group">
-          <form id="upload-image" method="post" enctype="multipart/form-data" action = "{{ url_for('upload')}}" >
             <li class="list-group-item">
               <div class="add-image">
                 <input class="form-control" type="file" name="msgimage" id="msgimage" accept=".gif,.jpeg,.jpg,.png,.bmp,.ppm">
@@ -143,9 +143,9 @@
                   Upload Background Image
                 </button>
               </div>
-              </form>
             </li>
           </ul>
+        </form>
           <br>
       </div>
     </div>

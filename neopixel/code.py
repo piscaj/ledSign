@@ -2,7 +2,7 @@ import time
 import board
 import neopixel
 from fade import Fader
-from gradient import *
+import gradient
 import wifi
 import adafruit_minimqtt.adafruit_minimqtt as MQTT
 import adafruit_esp32spi.adafruit_esp32spi_socket as socket
@@ -61,28 +61,54 @@ def connected(client, userdata, flags, rc):
 def disconnected(client, userdata, rc):
     global Isconnected
     Isconnected = False
-    # This method is called when the client is disconnected from the broker
+    # This method is called when the client is disconnected
     print("Disconnected from MQTT Broker!")
 
-# This function is used for sending messages on a topic
+def mqttUpdate():
+
+    try:
+        mqtt_client.loop()
+
+    except (ValueError, RuntimeError) as e:
+        print("Failed to update", e)
+        wifi.wifi.reset()
+        print("Connecting to WiFi...")
+        wifi.wifi.connect()
+        print("Connected!")
+        time.sleep(10)
+        print("Connecting to WiFi...")
+        wifi.wifi.connect()
+        print("Connected!")
+        mqtt_client.connect()
+
 def publish(topic,message):
+
     try:
         mqtt_client.publish(topic, message)
 
     except (ValueError, RuntimeError) as e:
         print("Failed to send message", e)
+        print("Reseting WiFi...")
         wifi.wifi.reset()
+        time.sleep(10)
         print("Connecting to WiFi...")
         wifi.wifi.connect()
         print("Connected!")
+        mqtt_client.connect()
+
+
 
 def message(client, topic, message):
     global neoPixelPowerState
     global colorChaseState
     global colorChaseColors
-    global colorPongState
     global colorPongColors
-    
+    global colorPongState
+    """Method callled when a client's subscribed feed has a new
+    value.
+    :param str topic: The topic of the feed with a new value.
+    :param str message: The new value
+    """
     try:
         print("New message on topic {0}: {1}".format(topic, message))
         if topic == "ledStrip/power":
@@ -122,10 +148,14 @@ def message(client, topic, message):
             colorPongState = True
     except (ValueError, RuntimeError) as e:
         print("Failed to recieve message", e)
+        print("Reseting WiFi...")
         wifi.wifi.reset()
+        time.sleep(10)
         print("Connecting to WiFi...")
         wifi.wifi.connect()
         print("Connected!")
+        mqtt_client.connect()
+
 
 # Setup the callback methods above
 mqtt_client.on_connect = connected
@@ -194,7 +224,7 @@ def rainbow_cycle(wait):
             pixels[i] = wheel(rc_index & 255)
         pixels.show()
         time.sleep(wait)
-    mqtt_client.loop()
+    mqttUpdate()
 
 def setColor(color):
     global neoPixelPowerState
@@ -210,12 +240,12 @@ def fadeColor(state):
         fadeState = True
     elif state == 0:
         fadeState = False
+pride = (4980736, 4980736, 4981248, 4982272, 4984064, 4986880, 4990720, 4996096, 3951616, 1592320, 412672, 19456, 13312, 5126, 1048, 60, 76, 65612, 327756, 852044, 1507367, 2359309, 3538946, 4980736)
 
-fader = Fader(gradient.pastels10)
 
-def updatefader(gradient):
-    fader.updatePalette(gradient)
+fader = Fader(gradient.halloween24[1])
 
+fadeColor(1)
 while True:
     if Isconnected:
         if fadeState:
@@ -226,7 +256,7 @@ while True:
                 pixels.write()
                 previous = fader.color
             if count == 5000:
-                mqtt_client.loop()
+                mqttUpdate()
                 publish("ledStrip/status", neoPixelPowerState)
                 count=0
         elif colorChaseState:
@@ -234,7 +264,7 @@ while True:
             if count <= 4:
                 color_chase(colorChaseColors[count-1],0)
             else:
-                mqtt_client.loop()
+                mqttUpdate()
                 publish("ledStrip/status", neoPixelPowerState)
                 count=0
         elif colorPongState:
@@ -244,11 +274,11 @@ while True:
             elif count == 2 or count == 4:
                 color_pong(colorPongColors[count-1],"pong")
             else:
-                mqtt_client.loop()
+                mqttUpdate()
                 publish("ledStrip/status", neoPixelPowerState)
                 count=0
         else:
             count = 0
-            mqtt_client.loop()
+            mqttUpdate()
             publish("ledStrip/status", neoPixelPowerState)
             time.sleep(2)
