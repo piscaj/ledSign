@@ -3,8 +3,8 @@ import time
 
 class neopixel_strip:
 
-    def __init__(self, pixels):
-        self.strand_length = 240
+    def __init__(self,strand_length, pixels):
+        self.strand_length = strand_length
         self.pixels = pixels
 
     def lightsoff(self):
@@ -146,14 +146,14 @@ class neopixel_strip:
         #time.sleep(1)
         #self.edges_to_middle(10, 10, 10)
         #time.sleep(1)
-        self.lowwhite()
+        #self.lowwhite()
         #time.sleep(1)
-        self.lightsoff()
+        #self.lightsoff()
         #time.sleep(1)
-        for x in list(range(0, self.strand_length*10)):
-            self.randlights()
+        #for x in list(range(0, self.strand_length*10)):
+        #    self.randlights()
         #time.sleep(1)
-        self.lightsoff()
-        time.sleep(2)
+        #self.lightsoff()
+        #time.sleep(2)
         # self.allwhite()
         # time.sleep(.1)

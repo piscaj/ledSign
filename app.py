@@ -206,6 +206,11 @@ def updateFadeColor():
     mqtt.publishMessage("ledStrip/fade",palette)
     return "Nothing"
 
+@app.route('/updateRandomColor', methods=["POST"])
+def updateRandomColor():
+    mqtt.publishMessage("ledStrip/random","ON")
+    return "Nothing"
+
 @app.route('/updateMatrix', methods=["POST"])
 def updateMatrix():
     sLeft, sRight, sFade, sSplit, sImage = False, False, False, False, False

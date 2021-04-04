@@ -178,6 +178,20 @@
         }
     });
 });
+$('#update-strip-random').submit(function(e){
+  e.preventDefault();
+  $.ajax({
+      url: '/updateRandomColor',
+      type: 'post',
+      data:$('#update-strip-random').serialize(),
+      success:function(){
+        setTimeout(function () {
+          //alert('Reloading Page');
+          window.location.href = "{{ url_for('strip')}}";
+        }, 5000);
+      }
+  });
+});
         
 
 </script>

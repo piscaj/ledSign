@@ -10,6 +10,7 @@ from effects import neopixel_strip
 
 count = 0
 fadeState = False
+randomState = False
 colorChaseState = False
 colorPongState = False
 colorChaseColors = ""
@@ -23,7 +24,7 @@ pixel_pin = board.A1
 num_pixels = 240
 pixels = neopixel.NeoPixel(pixel_pin, num_pixels,brightness=1.0, auto_write=False)
 
-ns = neopixel_strip(pixels)
+ns = neopixel_strip(num_pixels,pixels)
 
 neoPixelPowerState = "OFF"
 Isconnected = False
@@ -62,6 +63,7 @@ def connected(client, userdata, flags, rc):
     client.subscribe("ledStrip/chase")
     client.subscribe("ledStrip/pong")
     client.subscribe("ledStrip/fade")
+    client.subscribe("ledStrip/random")
 
 
 def disconnected(client, userdata, rc):
@@ -108,6 +110,7 @@ def message(client, topic, message):
     global colorChaseColors
     global colorPongColors
     global colorPongState
+    global randomState
     """Method callled when a client's subscribed feed has a new
     value.
     :param str topic: The topic of the feed with a new value.
@@ -124,6 +127,7 @@ def message(client, topic, message):
                 fadeColor(0)
                 colorChaseState = False
                 colorPongState = False
+                randomState = False
                 setColor(BLACK)
                 publish("ledStrip/status", "OFF")
                 neoPixelPowerState = "OFF"
@@ -131,12 +135,14 @@ def message(client, topic, message):
             fadeColor(0)
             colorChaseState = False
             colorPongState = False
+            randomState = False
             color = message
             color = tuple(int(color[i:i+2], 16) for i in (0, 2, 4))
             setColor(color)
         elif topic == "ledStrip/chase":
             fadeColor(0)
             colorPongState = False
+            randomState = False
             colorChaseColors = ""
             colorChaseColors = message.split(",")
             for x in range(4):
@@ -145,6 +151,7 @@ def message(client, topic, message):
         elif topic == "ledStrip/pong":
             fadeColor(0)
             colorChaseState = False
+            randomState = False
             colorPongColors = ""
             colorPongColors = message.split(",")
             for x in range(4):
@@ -154,6 +161,7 @@ def message(client, topic, message):
             global fader
             colorPongState = False
             colorChaseState = False
+            randomState = False
             r=random.randint(0,5)
             if message == "pride24":
                 fader = Fader(gradient.pride24[r])
@@ -194,6 +202,10 @@ def message(client, topic, message):
             elif message == "blue_to_off24":
                 fader = Fader(gradient.blue_to_off24[r])
                 fadeColor(1)
+        elif topic == "ledStrip/random":
+            colorPongState = False
+            colorChaseState = False
+            randomColor(1)
 
     except (ValueError, RuntimeError) as e:
         print("Failed to recieve message", e)
@@ -290,9 +302,13 @@ def fadeColor(state):
     elif state == 0:
         fadeState = False
 
-
-#ns.demo()
-
+def randomColor(state):
+    global randomState
+    if state == 1:
+        randomState = True
+    elif state == 0:
+        randomState = False
+    
 while True:
     if Isconnected:
         if fadeState:
@@ -324,6 +340,12 @@ while True:
                 mqttUpdate()
                 publish("ledStrip/status", neoPixelPowerState)
                 count=0
+        elif randomState:
+            for x in list(range(0, ns.strand_length*10)):
+                ns.randlights()
+            mqttUpdate()
+            publish("ledStrip/status", neoPixelPowerState)
+            count=0
         else:
             count = 0
             mqttUpdate()
