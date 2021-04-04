@@ -6,6 +6,7 @@ import gradient
 import wifi
 import adafruit_minimqtt.adafruit_minimqtt as MQTT
 import adafruit_esp32spi.adafruit_esp32spi_socket as socket
+from effects import neopixel_strip
 
 count = 0
 fadeState = False
@@ -20,7 +21,9 @@ fader = Fader(gradient.july4th24[1])
 # Set up NeoPixel strip
 pixel_pin = board.A1
 num_pixels = 240
-pixels = neopixel.NeoPixel(pixel_pin, num_pixels, brightness=1.0, auto_write=False)
+pixels = neopixel.NeoPixel(pixel_pin, num_pixels,brightness=1.0, auto_write=False)
+
+ns = neopixel_strip(pixels)
 
 neoPixelPowerState = "OFF"
 Isconnected = False
@@ -286,6 +289,9 @@ def fadeColor(state):
         fadeState = True
     elif state == 0:
         fadeState = False
+
+
+#ns.demo()
 
 while True:
     if Isconnected:

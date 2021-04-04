@@ -1,15 +1,11 @@
-import board
-import neopixel
 import random
 import time
 
 class neopixel_strip:
 
-    def __init__(self, strand_length=240, pin_placement=board.A1):
-        self.strand_length = strand_length
-        self.pixels = neopixel.NeoPixel(pin_placement,
-                                        self.strand_length,
-                                        auto_write=False)
+    def __init__(self, pixels):
+        self.strand_length = 240
+        self.pixels = pixels
 
     def lightsoff(self):
         for x in list(range(0, self.strand_length)):
@@ -37,33 +33,33 @@ class neopixel_strip:
         red = random.randint(0, 255)
         green = random.randint(0, 255)
         blue = random.randint(0, 255)
-        self.pixels.brightness(0.0, 1.0)
+        #self.pixels.brightness(0.0, 1.0)
         self.lightup(lightnum, red, green, blue)
-        time.sleep(.1)
+        time.sleep(.01)
 
     def left_to_right(self, red=0, green=0, blue=0):
         for x in list(range(0, self.strand_length)):
             self.lightup(x, red, green, blue)
-            time.sleep(0.05)
+            time.sleep(.01)
         time.sleep(.1)
 
     def right_to_left(self, red=0, green=0, blue=0):
         for x in sorted(list(range(0, self.strand_length)), reverse=True):
             self.lightup(x, red, green, blue)
-            time.sleep(.05)
+            time.sleep(.01)
         time.sleep(.1)
 
     def middle_to_edges(self, red=0, green=0, blue=0):
         for x in sorted(list(range(0, self.strand_length//2))):
             self.lightup(x+5, red, green, blue)
             self.lightup(4-x, red, green, blue)
-            time.sleep(.1)
+            time.sleep(.01)
 
     def edges_to_middle(self, red=0, green=0, blue=0):
         for x in sorted(list(range(0, self.strand_length//2)), reverse=True):
             self.lightup(x+5, red, green, blue)
             self.lightup(4-x, red, green, blue)
-            time.sleep(.1)
+            time.sleep(.01)
 
     def ribbon(self,
                pixel_count=1,
@@ -105,62 +101,59 @@ class neopixel_strip:
             time.sleep(speed)
         self.lightsoff()
 
-    def demo(self, demo_runs=1):
-        if demo_runs == 0:
-            self.lightsoff()
+    def demo(self):
+        self.lightsoff()
 
-        while demo_runs:
-            self.ribbon(2, 20, 20, 10, 5)
-            time.sleep(2)
-            self.ribbon_left_to_right(pixel_count=3, red=0, green=0, blue=20)
-            time.sleep(1)
-            self.ribbon_right_to_left(pixel_count=4, red=0, green=20, blue=0)
-            time.sleep(1)
-            self.left_to_right(red=10)
-            time.sleep(1)
-            self.left_to_right(green=10)
-            time.sleep(1)
-            self.left_to_right(blue=10)
-            time.sleep(1)
-            self.left_to_right(red=10, green=10, blue=10)
-            time.sleep(1)
-            self.right_to_left(red=10)
-            time.sleep(1)
-            self.right_to_left(green=10)
-            time.sleep(1)
-            self.right_to_left(blue=10)
-            time.sleep(1)
-            self.right_to_left(red=10, green=10, blue=10)
-            time.sleep(1)
-            self.lowwhite()
-            time.sleep(1)
-            self.middle_to_edges()
-            time.sleep(1)
-            self.middle_to_edges(red=10)
-            time.sleep(1)
-            self.middle_to_edges(green=10)
-            time.sleep(1)
-            self.middle_to_edges(blue=10)
-            time.sleep(1)
-            self.middle_to_edges(10, 10, 10)
-            time.sleep(1)
-            self.edges_to_middle(red=10)
-            time.sleep(1)
-            self.edges_to_middle(green=10)
-            time.sleep(1)
-            self.edges_to_middle(blue=10)
-            time.sleep(1)
-            self.edges_to_middle(10, 10, 10)
-            time.sleep(1)
-            self.lowwhite()
-            time.sleep(1)
-            self.lightsoff()
-            time.sleep(1)
-            for x in list(range(0, self.strand_length*10)):
-                self.randlights()
-            time.sleep(1)
-            self.lightsoff()
-            time.sleep(2)
-            # self.allwhite()
-            # time.sleep(.1)
-            demo_runs = demo_runs - 1
+        #self.ribbon(240, 20, 20, 10, 5)
+        #time.sleep(2)
+        #self.ribbon_left_to_right(pixel_count=240, red=0, green=0, blue=20)
+        #time.sleep(1)
+        #self.ribbon_right_to_left(pixel_count=240, red=0, green=20, blue=0)
+        #time.sleep(1)
+        #self.left_to_right(red=10)
+        #time.sleep(1)
+        #self.left_to_right(green=10)
+        #time.sleep(1)
+        #self.left_to_right(blue=10)
+        #time.sleep(1)
+        #self.left_to_right(red=10, green=10, blue=10)
+        #time.sleep(1)
+        #self.right_to_left(red=10)
+        #time.sleep(1)
+        #self.right_to_left(green=10)
+        #time.sleep(1)
+        #self.right_to_left(blue=10)
+        #time.sleep(1)
+        #self.right_to_left(red=10, green=10, blue=10)
+        #time.sleep(1)
+        #self.lowwhite()
+        #time.sleep(1)
+        #self.middle_to_edges()
+        #time.sleep(1)
+        #self.middle_to_edges(red=10)
+        #time.sleep(1)
+        #self.middle_to_edges(green=10)
+        #time.sleep(1)
+        #self.middle_to_edges(blue=10)
+        #time.sleep(1)
+        #self.middle_to_edges(10, 10, 10)
+        #time.sleep(1)
+        #self.edges_to_middle(red=10)
+        #time.sleep(1)
+        #self.edges_to_middle(green=10)
+        #time.sleep(1)
+        #self.edges_to_middle(blue=10)
+        #time.sleep(1)
+        #self.edges_to_middle(10, 10, 10)
+        #time.sleep(1)
+        self.lowwhite()
+        #time.sleep(1)
+        self.lightsoff()
+        #time.sleep(1)
+        for x in list(range(0, self.strand_length*10)):
+            self.randlights()
+        #time.sleep(1)
+        self.lightsoff()
+        time.sleep(2)
+        # self.allwhite()
+        # time.sleep(.1)
